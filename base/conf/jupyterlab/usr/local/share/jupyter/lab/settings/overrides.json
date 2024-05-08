@@ -1,0 +1,23 @@
+{
+  "@jupyterlab/apputils-extension:notification": {
+    "checkForUpdates": false,
+    "fetchNews": false
+  },
+  "@jupyterlab/apputils-extension:themes": {
+    "theme": "JupyterLab Dark"
+  },
+  "@jupyterlab/terminal-extension:plugin": {
+    "fontFamily": "MesloLGS NF"
+  },
+  "@jupyter-lsp/jupyterlab-lsp:plugin": {
+    "language_servers": {
+      "pylsp": {
+        "serverSettings": {
+          "pylsp.plugins.pydocstyle.enabled": true,
+          "pylsp.plugins.pyflakes.enabled": false,
+          "pylsp.plugins.flake8.enabled": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "editor.tabSize": 2,
+  "gitlab.aiAssistedCodeSuggestions.enabled": false,
+  "gitlab.duoChat.enabled": false,
+  "gitlens.graph.statusBar.enabled": false,
+  "gitlens.menus": {
+    "scm": {
+      "graph": false
+    },
+    "scmRepositoryInline": {
+      "graph": false
+    },
+    "scmRepository": {
+      "graph": false
+    }
+  },
+  "gitlens.showWelcomeOnInstall": false,
+  "gitlens.showWhatsNewAfterUpgrades": false,
+  "mojo.modularHomePath": "/opt/modular",
+  "python.languageServer": "Jedi",
+  "resmon.show.battery": false,
+  "resmon.show.cpufreq": false,
+  "telemetry.telemetryLevel": "off",
+  "terminal.integrated.fontFamily": "MesloLGS NF",
+  "workbench.colorTheme": "Default Dark+"
+}
