@@ -14,6 +14,8 @@ Images considered stable for Mojo versions ≥ 24.3.0.
 :microscope: Check out `jupyterlab/mojo/scipy` at
 <https://demo.jupyter.b-data.ch>.
 
+![Screenshot](assets/screenshot.png)
+
 **Build chain**
 
 base → scipy

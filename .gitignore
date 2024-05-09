@@ -1,6 +1,7 @@
 *
 
 !/.github/
+!/assets/
 !/base/
 !/base/assets/
 !/base/assets/opt/
@@ -52,6 +53,7 @@
 !/scipy/
 
 !/.github/FUNDING.yml
+!/assets/screenshot.png
 !/base/assets/opt/code-server/code-server.svg
 !/base/assets/opt/code-server/src/browser/media/css/*.css
 !/base/assets/opt/code-server/src/browser/media/fonts/*.woff
