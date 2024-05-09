@@ -126,6 +126,7 @@ To install docker, follow the instructions for your platform:
 ```bash
 cd base && docker build \
   --build-arg MODULAR_VERSION=0.7.4 \
+  --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
   --build-arg MOJO_VERSION=24.3.0 \
   --build-arg PYTHON_VERSION=3.12.3 \
   -t jupyterlab/mojo/base \
@@ -136,6 +137,7 @@ cd base && docker build \
 
 ```bash
 cd base && docker build \
+  --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```
@@ -166,8 +168,6 @@ docker run -it --rm \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
   -e NB_UID=$(id -u) \
   -e NB_GID=$(id -g) \
-  -e CHOWN_HOME=yes \
-  -e CHOWN_HOME_OPTS='-R' \
   jupyterlab/mojo/base[:MAJOR.MINOR.PATCH]
 ```
 
@@ -180,8 +180,6 @@ docker run -it --rm \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
   -e NB_UID=$(id -u) \
   -e NB_GID=$(id -g) \
-  -e CHOWN_HOME=yes \
-  -e CHOWN_HOME_OPTS='-R' \
   IMAGE[:MAJOR[.MINOR[.PATCH]]]
 ```
 
@@ -196,11 +194,6 @@ The use of the `-v` flag in the command mounts the empty directory on the host
 `-e NB_UID=$(id -u) -e NB_GID=$(id -g)` instructs the startup script to switch
 the user ID and the primary group ID of `${NB_USER}` to the user and group ID of
 the one executing the command.
-
-`-e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R'` instructs the startup script to
-recursively change the `${NB_USER}` home directory owner and group to the
-current value of `${NB_UID}` and `${NB_GID}`.  
-:information_source: This is only required for the first run.
 
 The server logs appear in the terminal.
 
@@ -239,20 +232,6 @@ docker run -it --rm \
 ```
 
 *might* be sufficient.
-
-### Credential storage
-
-**:exclamation: Keyring services are not available due to the difficulties of**
-**setting them up in containers.**  
-**Therefore, provide login credentials for the following extensions as**
-**environment variables (`-e`):**
-
-| Extension                       | Environment variable                                                                                                                                                  |
-|:--------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GitHub Pull Requests and Issues | `GITHUB_TOKEN`: Personal access token with scopes `repo` and `user`.[^1]                                                                                              |
-| GitLab Workflow                 | `GITLAB_WORKFLOW_INSTANCE_URL`: GitLab instance URL (e.g. <https://gitlab.com>).<br>`GITLAB_WORKFLOW_TOKEN`: Personal access token with scopes `api` and `read_user`. |
-
-[^1]: *Device activation* may require a one-time login from the extension's sidebar.
 
 ## Similar projects
 
