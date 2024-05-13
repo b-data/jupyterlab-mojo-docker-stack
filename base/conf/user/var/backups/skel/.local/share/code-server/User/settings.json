@@ -16,7 +16,6 @@
   },
   "gitlens.showWelcomeOnInstall": false,
   "gitlens.showWhatsNewAfterUpgrades": false,
-  "mojo.modularHomePath": "/opt/modular",
   "python.languageServer": "Jedi",
   "resmon.show.battery": false,
   "resmon.show.cpufreq": false,
