@@ -380,12 +380,16 @@ COPY --from=modular /opt /opt
 ## Install the Mojo kernel for Jupyter
 COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
 
-## Install the MAX Engine Python package
-RUN if [ "${INSTALL_MAX}" = "1" -o "${INSTALL_MAX}" = "true" ]; then \
-  python3 -m pip install --find-links \
-    /opt/modular/pkg/packages.modular.com_max/wheels max-engine; \
-  rm -rf ${HOME}/.cache; \
-fi
+## Install the MAX Engine Python package or numpy
+RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
+  && if [ "${INSTALL_MAX}" = "1" -o "${INSTALL_MAX}" = "true" ]; then \
+    pip install --find-links \
+      /opt/modular/pkg/packages.modular.com_max/wheels max-engine; \
+  else \
+    pip install numpy; \
+  fi \
+  ## Clean up
+  && rm -rf ${HOME}/.cache
 
 ## Switch back to ${NB_USER} to avoid accidental container runs as root
 USER ${NB_USER}
