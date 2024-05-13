@@ -158,6 +158,10 @@ are installed.
 
 ## Python
 
-The latest Python version is installed at `/usr/local/bin`, regardless of
-whether all packages – such as numba, tensorflow, etc. – are already compatible
-with it.
+The Python version is selected as follows: The latest Python version
+[Numba](https://numba.readthedocs.io/en/stable/user/installing.html#numba-support-info),
+[PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md#release-compatibility-matrix)
+and
+[TensorFlow](https://www.tensorflow.org/install/source#cpu) are compatible with.
+
+This Python version is installed at `/usr/local/bin`.
