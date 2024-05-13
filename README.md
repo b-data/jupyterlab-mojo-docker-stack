@@ -122,7 +122,7 @@ To install docker, follow the instructions for your platform:
 
 ### Build image (base)
 
-*latest*:
+latest:
 
 ```bash
 cd base && docker build \
@@ -134,7 +134,7 @@ cd base && docker build \
   -f latest.Dockerfile .
 ```
 
-*version*:
+version:
 
 ```bash
 cd base && docker build \
