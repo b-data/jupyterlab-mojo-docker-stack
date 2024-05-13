@@ -57,19 +57,6 @@ c.ServerProxy.servers = {
     }
 }
 
-c.LanguageServerManager.language_servers = {
-    "mojo": {
-        "argv": [
-            "/opt/modular/pkg/packages.modular.com_mojo/bin/mojo-lsp-server",
-            "--log=error"
-        ],
-        "languages": ["mojo"],
-        "version": 2,
-        "mime_types": ["text/x-mojo"],
-        "display_name": "mojo-lsp-server"
-    }
-}
-
 # Generate a self-signed certificate
 OPENSSL_CONFIG = """\
 [req]

@@ -45,7 +45,7 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
   ## Update Modular setup
   && if [ "${INSTALL_MAX}" = "1" -o "${INSTALL_MAX}" = "true" ]; then \
     sed -i s/packages.modular.com_mojo/packages.modular.com_max/g \
-      /files/etc/jupyter/jupyter_server_config.py; \
+      /files/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json; \
     sed -i s/packages.modular.com_mojo/packages.modular.com_max/g \
       /files/etc/profile.d/00-reset-path.sh; \
   fi \

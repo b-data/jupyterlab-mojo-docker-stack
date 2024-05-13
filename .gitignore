@@ -23,6 +23,9 @@
 !/base/conf/jupyterlab/
 !/base/conf/jupyterlab/usr/
 !/base/conf/jupyterlab/usr/local/
+!/base/conf/jupyterlab/usr/local/etc/
+!/base/conf/jupyterlab/usr/local/etc/jupyter/
+!/base/conf/jupyterlab/usr/local/etc/jupyter/jupyter_server_config.d/
 !/base/conf/jupyterlab/usr/local/share/
 !/base/conf/jupyterlab/usr/local/share/jupyter/
 !/base/conf/jupyterlab/usr/local/share/jupyter/lab/
@@ -60,6 +63,7 @@
 !/base/assets/opt/code-server/src/browser/media/fonts/*.woff2
 !/base/conf/ipython/usr/local/etc/ipython/ipython_config.py
 !/base/conf/jupyter/etc/jupyter/jupyter_server_config.py
+!/base/conf/jupyterlab/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json
 !/base/conf/jupyterlab/usr/local/share/jupyter/lab/settings/overrides.json
 !/base/conf/shell/etc/profile.d/*.sh
 !/base/conf/shell/etc/skel/.profile
