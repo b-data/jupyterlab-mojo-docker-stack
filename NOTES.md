@@ -43,12 +43,13 @@ The following startup hooks are put in place:
 
 ### Custom scripts
 
-[/usr/local/bin/busy](base/scripts/usr/local/bin/busy) is executed during
-`screen`/`tmux` sessions to update the last-activity timestamps on JupyterHub.
-
-:information_source: This prevents the [JupyterHub Idle Culler Service](https://github.com/jupyterhub/jupyterhub-idle-culler)
-from shutting down idle or long-running Jupyter Notebook servers, allowing for
-unattended computations.
+* [/usr/local/bin/busy](base/scripts/usr/local/bin/busy) is executed during
+  `screen`/`tmux` sessions to update the last-activity timestamps on JupyterHub
+  to prevent the [JupyterHub Idle Culler Service](https://github.com/jupyterhub/jupyterhub-idle-culler)
+  from shutting down idle or long-running Jupyter Notebook servers, allowing for
+  unattended computations.
+* [/usr/local/bin/python-kernel.sh](base/scripts/usr/local/bin/python-kernel.sh)
+  to start a custom conda/virtual env Python kernel.
 
 ### Environment variables
 
@@ -92,7 +93,7 @@ updated at user level.
 
 In addition to the TeX packages used in
 [rocker/verse](https://github.com/rocker-org/rocker-versioned2/blob/master/scripts/install_texlive.sh),
-[jupyter/scipy-notebook](https://github.com/jupyter/docker-stacks/blob/main/scipy-notebook/Dockerfile)
+[jupyter/scipy-notebook](https://github.com/jupyter/docker-stacks/blob/main/images/scipy-notebook/Dockerfile)
 and required for `nbconvert`, the
 [packages requested by the community](https://yihui.org/gh/tinytex/tools/pkgs-yihui.txt)
 are installed.
@@ -120,7 +121,7 @@ are installed.
   * Workbench > Appearance > Color Theme: Default Dark+
 * Zsh
   * Oh My Zsh: `~/.zshrc`
-    * Set PATH so it includes user's private bin if it exists
+    * Set `PATH` so it includes user's private bin if it exists
     * Update last-activity timestamps while in screen/tmux session
   * [Powerlevel10k](base/conf/user/var/backups/skel/.p10k.zsh): `p10k configure`
     * Does this look like a diamond (rotated square)?: (y)  Yes.
@@ -142,6 +143,10 @@ are installed.
     * Prompt Flow: (1)  Concise.
     * Enable Transient Prompt?: (n)  No.
     * Instant Prompt Mode: (3)  Off.
+* Bash: [/etc/profile.d/00-reset-path.sh](base/conf/shell/etc/profile.d/00-reset-path.sh)
+  and [/etc/skel/.profile](base/conf/shell/etc/skel/.profile)
+  * Update `PATH` for login shells, e.g. when started as a server associated
+    with JupyterHub.
 
 ### Customise
 
@@ -149,12 +154,13 @@ are installed.
   * Valid figure formats: `png`, `retina`, `jpeg`, `svg`, `pdf`.
 * JupyterLab: Settings > Advanced Settings Editor
 * code-server: Manage > Settings
-
 * Zsh
   * Oh My Zsh: Edit `~/.zshrc`.
   * Powerlevel10k: Run `p10k configure` or edit `~/.p10k.zsh`.
     * Update command:
       `git -C ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k pull`
+* Bash
+  * Edit `~/.bashrc`.
 
 ## Python
 
