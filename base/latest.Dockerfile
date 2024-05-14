@@ -99,6 +99,7 @@ LABEL org.opencontainers.image.licenses="$IMAGE_LICENSE" \
       org.opencontainers.image.authors="$IMAGE_AUTHORS"
 
 ENV PARENT_IMAGE=${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} \
+    MODULAR_HOME=/opt/modular \
     MOJO_VERSION=${MOJO_VERSION%%-*} \
     NB_USER=${NB_USER} \
     NB_UID=${NB_UID} \
@@ -256,26 +257,20 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
 ## Install Mojo or MAX
 RUN modular config-set telemetry.enabled=false \
   && modular config-set crash_reporting.enabled=false \
-  && if [ "${MODULAR_NO_AUTH}" != "1" -o "${MODULAR_NO_AUTH}" != "true" ]; then \
+  && if [ "${MODULAR_NO_AUTH}" != "1" ] && [ "${MODULAR_NO_AUTH}" != "true" ]; then \
     modular auth \
       "${MODULAR_AUTH_KEY:-$(echo -n "${NB_USER}" | sha256sum | cut -c -8)}"; \
   fi \
-  && if [ "${INSTALL_MAX}" = "1" -o "${INSTALL_MAX}" = "true" ]; then \
+  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     modular install --install-version "${MOJO_VERSION}" max; \
   else \
     modular install --install-version "${MOJO_VERSION_FULL}" mojo; \
   fi \
-  ## Move Modular home to /opt/modular
-  && mv ${HOME}/.modular /opt/modular \
-  && grep -rl ${HOME}/.modular /opt/modular | \
-    xargs sed -i "s|${HOME}/.modular|/opt/modular|g" \
-  && chown -R root:${NB_GID} /opt/modular \
-  && chmod -R g+w /opt/modular \
-  && chmod -R g+rx /opt/modular/crashdb \
+  && chown -R root:${NB_GID} ${MODULAR_HOME} \
+  && chmod -R g+w ${MODULAR_HOME} \
+  && chmod -R g+rx ${MODULAR_HOME}/crashdb \
   ## Clean up
-  && find /opt/modular -name '*.pyc' -delete \
-  && rm -rf ${HOME}/.cache \
-    /opt/modular/.*_cache
+  && rm -rf ${MODULAR_HOME}/.*_cache
 
 ## Install the Mojo kernel for Jupyter
 RUN mkdir -p /usr/local/share/jupyter/kernels \
@@ -283,9 +278,7 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
     /usr/local/share/jupyter/kernels/ \
   ## Fix Modular home in the Mojo kernel for Jupyter
   && grep -rl ${HOME}/.local /usr/local/share/jupyter/kernels/mojo* | \
-    xargs sed -i "s|${HOME}/.local|/usr/local|g" \
-  && grep -rl ${HOME}/.modular /usr/local/share/jupyter/kernels/mojo* | \
-    xargs sed -i "s|${HOME}/.modular|/opt/modular|g"
+    xargs sed -i "s|${HOME}/.local|/usr/local|g"
 
 FROM base
 
@@ -369,11 +362,10 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && rm -rf /tmp/* \
     ${HOME}/.cache
 
-ARG MODULAR_PKG_BIN=${INSTALL_MAX:+/opt/modular/pkg/packages.modular.com_max/bin}
-ARG MODULAR_PKG_BIN=${MODULAR_PKG_BIN:-/opt/modular/pkg/packages.modular.com_mojo/bin}
+ARG MODULAR_PKG_BIN=${INSTALL_MAX:+$MODULAR_HOME/pkg/packages.modular.com_max/bin}
+ARG MODULAR_PKG_BIN=${MODULAR_PKG_BIN:-$MODULAR_HOME/pkg/packages.modular.com_mojo/bin}
 
-ENV MODULAR_HOME=/opt/modular \
-    PATH=${MODULAR_PKG_BIN}:$PATH
+ENV PATH=${MODULAR_PKG_BIN}:$PATH
 
 ## Install Mojo or MAX
 COPY --from=modular /opt /opt
@@ -382,9 +374,9 @@ COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
 
 ## Install the MAX Engine Python package or numpy
 RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
-  && if [ "${INSTALL_MAX}" = "1" -o "${INSTALL_MAX}" = "true" ]; then \
+  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     pip install --find-links \
-      /opt/modular/pkg/packages.modular.com_max/wheels max-engine; \
+      ${MODULAR_HOME}/pkg/packages.modular.com_max/wheels max-engine; \
   else \
     pip install numpy; \
   fi \

@@ -109,7 +109,7 @@ are installed.
   * Terminal > Font family: MesloLGS NF
   * Python LSP Server: Example settings according to
     [jupyter-lsp/jupyterlab-lsp > Installation > Configuring the servers](https://github.com/jupyter-lsp/jupyterlab-lsp#configuring-the-servers)
-  * Mojo LSP Server
+  * [Mojo LSP Server](base/conf/jupyterlab/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json)
 * [code-server](base/conf/user/var/backups/skel/.local/share/code-server/User/settings.json)
   * Text Editor > Tab Size: 2
   * Extensions > GitLens — Git supercharged

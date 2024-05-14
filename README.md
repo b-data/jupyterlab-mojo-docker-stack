@@ -126,8 +126,7 @@ latest:
 
 ```bash
 cd base && docker build \
-  --build-arg MODULAR_VERSION=0.7.4 \
-  --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
+  --build-arg MODULAR_VERSION=0.8.0 \
   --build-arg MOJO_VERSION=24.3.0 \
   --build-arg PYTHON_VERSION=3.12.3 \
   -t jupyterlab/mojo/base \
@@ -138,7 +137,6 @@ version:
 
 ```bash
 cd base && docker build \
-  --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```

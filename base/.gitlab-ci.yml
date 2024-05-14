@@ -1,6 +1,6 @@
 .env:
   variables:
-    MODULAR_VERSION: "0.7.4"
+    MODULAR_VERSION: "0.8.0"
     MOJO_VERSION: "24.3.0"
     PYTHON_VERSION: "3.12.3"
     TAG_VERSION_MAJ_MIN: "false"
@@ -69,6 +69,7 @@ build:latest-linux-amd64:
       --build-arg BASE_IMAGE_TAG
       --build-arg BUILD_ON_IMAGE
       --build-arg MODULAR_VERSION
+      --build-arg MODULAR_NO_AUTH
       --build-arg MOJO_VERSION
       --build-arg INSTALL_MAX
       --build-arg PYTHON_VERSION
@@ -118,6 +119,7 @@ build:latest-linux-arm64v8:
       --build-arg BASE_IMAGE_TAG
       --build-arg BUILD_ON_IMAGE
       --build-arg MODULAR_VERSION
+      --build-arg MODULAR_NO_AUTH
       --build-arg MOJO_VERSION
       --build-arg INSTALL_MAX
       --build-arg PYTHON_VERSION
