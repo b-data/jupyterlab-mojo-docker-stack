@@ -286,4 +286,6 @@ and much more.
 
 ## License
 
-[MIT](LICENSE) © 2024 b-data GmbH
+Copyright © 2024 b-data GmbH
+
+Distributed under the terms of the [MIT License](LICENSE), with exceptions.
