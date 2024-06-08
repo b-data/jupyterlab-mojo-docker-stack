@@ -75,7 +75,7 @@
 !/base/scripts/usr/local/bin/start-notebook.d/*.sh
 !/base/.gitlab-ci.yml
 !/base/*.Dockerfile
-!/common/subtags/devtools/latest.Dockerfile
+!/common/subtags/devtools/*.Dockerfile
 !/common/subtags/docker/Dockerfile
 !/common/subtags/root/Dockerfile
 !/scipy/.gitlab-ci.yml
