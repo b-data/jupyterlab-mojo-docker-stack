@@ -1,7 +1,7 @@
 .env:
   variables:
     MOJO_VERSION: "24.3.0"
-    TAG_VERSION_MAJ_MIN: "false"
+    TAG_VERSION_MAJ_MIN: "true"
     TAG_VERSION_MAJ: "false"
 
 .before-script-build: &before-script-build
@@ -23,7 +23,7 @@
   - >
     export VERSION_MAJ_MIN=`echo $MOJO_VERSION |
     sed -n "s|\([[:digit:]]\+\.[[:digit:]]\+\).*|\1|p"`
-    
+
     export VERSION_MAJ=`echo $MOJO_VERSION |
     sed -n "s|\([[:digit:]]\+\).*|\1|p"`
 
@@ -243,7 +243,7 @@ build-manifest:latest-linux-multiarch:
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-root
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-docker
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-docker-root
-      
+
       docker manifest create $CI_APP_REPO:latest $CI_MANIFEST_LIST
       docker manifest create $CI_APP_REPO:latest-root $CI_MANIFEST_LIST_ROOT
       docker manifest create $CI_APP_REPO:latest-docker $CI_MANIFEST_LIST_DOCKER
@@ -262,7 +262,7 @@ build-manifest:latest-linux-multiarch:
       docker manifest push $CI_APP_REPO:latest-root
       docker manifest push $CI_APP_REPO:latest-docker
       docker manifest push $CI_APP_REPO:latest-docker-root
-      
+
       docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN $CI_MANIFEST_LIST
       docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-root $CI_MANIFEST_LIST_ROOT
       docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-docker $CI_MANIFEST_LIST_DOCKER
@@ -281,7 +281,7 @@ build-manifest:latest-linux-multiarch:
       docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-root
       docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-docker
       docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-docker-root
-      
+
       docker manifest create $CI_APP_REPO:$VERSION_MAJ $CI_MANIFEST_LIST
       docker manifest create $CI_APP_REPO:$VERSION_MAJ-root $CI_MANIFEST_LIST_ROOT
       docker manifest create $CI_APP_REPO:$VERSION_MAJ-docker $CI_MANIFEST_LIST_DOCKER
@@ -336,7 +336,7 @@ build-manifest:version-linux-multiarch:
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-root
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-docker
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-docker-root
-      
+
       if [[ "$TAG_VERSION_MAJ_MIN" == "true" ]]; then
         docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN $CI_MANIFEST_LIST
         docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-root $CI_MANIFEST_LIST_ROOT
@@ -357,7 +357,7 @@ build-manifest:version-linux-multiarch:
         docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-docker
         docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-docker-root
       fi
-      
+
       if [[ "$TAG_VERSION_MAJ" == "true" ]]; then
         docker manifest create $CI_APP_REPO:$VERSION_MAJ $CI_MANIFEST_LIST
         docker manifest create $CI_APP_REPO:$VERSION_MAJ-root $CI_MANIFEST_LIST_ROOT
@@ -600,7 +600,7 @@ build-manifest:latest-devtools-linux-multiarch:
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-devtools-root
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-devtools-docker
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-devtools-docker-root
-      
+
       docker manifest create $CI_APP_REPO:latest-devtools $CI_MANIFEST_LIST
       docker manifest create $CI_APP_REPO:latest-devtools-root $CI_MANIFEST_LIST_ROOT
       docker manifest create $CI_APP_REPO:latest-devtools-docker $CI_MANIFEST_LIST_DOCKER
@@ -619,7 +619,7 @@ build-manifest:latest-devtools-linux-multiarch:
       docker manifest push $CI_APP_REPO:latest-devtools-root
       docker manifest push $CI_APP_REPO:latest-devtools-docker
       docker manifest push $CI_APP_REPO:latest-devtools-docker-root
-      
+
       docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-devtools $CI_MANIFEST_LIST
       docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-root $CI_MANIFEST_LIST_ROOT
       docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-docker $CI_MANIFEST_LIST_DOCKER
@@ -638,7 +638,7 @@ build-manifest:latest-devtools-linux-multiarch:
       docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-root
       docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-docker
       docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-docker-root
-      
+
       docker manifest create $CI_APP_REPO:$VERSION_MAJ-devtools $CI_MANIFEST_LIST
       docker manifest create $CI_APP_REPO:$VERSION_MAJ-devtools-root $CI_MANIFEST_LIST_ROOT
       docker manifest create $CI_APP_REPO:$VERSION_MAJ-devtools-docker $CI_MANIFEST_LIST_DOCKER
@@ -694,7 +694,7 @@ build-manifest:version-devtools-linux-multiarch:
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-devtools-root
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-devtools-docker
       docker manifest push $CI_APP_REPO:$CI_APP_TAG-devtools-docker-root
-      
+
       if [[ "$TAG_VERSION_MAJ_MIN" == "true" ]]; then
         docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-devtools $CI_MANIFEST_LIST
         docker manifest create $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-root $CI_MANIFEST_LIST_ROOT
@@ -715,7 +715,7 @@ build-manifest:version-devtools-linux-multiarch:
         docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-docker
         docker manifest push $CI_APP_REPO:$VERSION_MAJ_MIN-devtools-docker-root
       fi
-      
+
       if [[ "$TAG_VERSION_MAJ" == "true" ]]; then
         docker manifest create $CI_APP_REPO:$VERSION_MAJ-devtools $CI_MANIFEST_LIST
         docker manifest create $CI_APP_REPO:$VERSION_MAJ-devtools-root $CI_MANIFEST_LIST_ROOT
