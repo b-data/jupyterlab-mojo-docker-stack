@@ -245,7 +245,7 @@ What makes this project different:
    :information_source: Runs on Apple M series using Docker Desktop.
 1. Base image: [Debian](https://hub.docker.com/_/debian) instead of
    [Ubuntu](https://hub.docker.com/_/ubuntu)  
-   :information_source: Upcoming: CUDA-enabled images are Ubuntu-based.
+   :information_source: Upcoming: CUDA-based images use Ubuntu.
 1. IDE: [code-server](https://github.com/coder/code-server) next to
    [JupyterLab](https://github.com/jupyterlab/jupyterlab)  
    :information_source: code-server =
