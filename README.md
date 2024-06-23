@@ -103,6 +103,7 @@ The following extensions are pre-installed for **code-server**:
 * [Prerequisites](#prerequisites)
 * [Install](#install)
 * [Usage](#usage)
+* [Misc](#misc)
 * [Similar projects](#similar-projects)
 * [Contributing](#contributing)
 * [Support](#support)
@@ -234,6 +235,27 @@ docker run -it --rm \
 ```
 
 *might* be sufficient.
+
+## Misc
+
+### marimo
+
+To add a JupyterLab Launcher icon for marimo:
+
+1. Terminal: Install [marimo](https://marimo.io) and click
+
+   ```bash
+   pip install marimo click
+   ```
+
+1. Terminal: Install
+   [jupyter-marimo-proxy](https://github.com/b-data/jupyter-marimo-proxy/tree/jupyterlab-docker-stack)
+
+   ```bash
+   pip install git+https://github.com/b-data/jupyter-marimo-proxy.git@jupyterlab-docker-stack
+   ```
+
+1. Restart the container
 
 ## Similar projects
 
