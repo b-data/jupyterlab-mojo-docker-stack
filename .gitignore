@@ -34,6 +34,7 @@
 !/base/conf/shell/etc/
 !/base/conf/shell/etc/profile.d/
 !/base/conf/shell/etc/skel/
+!/base/conf/shell/etc/zsh/
 !/base/conf/user/
 !/base/conf/user/var/
 !/base/conf/user/var/backups/
@@ -67,6 +68,7 @@
 !/base/conf/jupyterlab/usr/local/share/jupyter/lab/settings/overrides.json
 !/base/conf/shell/etc/profile.d/*.sh
 !/base/conf/shell/etc/skel/.profile
+!/base/conf/shell/etc/zsh/zprofile
 !/base/conf/user/var/backups/skel/.p10k.zsh
 !/base/conf/user/var/backups/skel/.local/share/code-server/User/settings.json
 !/base/scripts/usr/local/bin/busy
