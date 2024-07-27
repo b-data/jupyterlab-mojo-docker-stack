@@ -12,6 +12,10 @@
 !/base/assets/opt/code-server/src/browser/media/css/
 !/base/assets/opt/code-server/src/browser/media/fonts/
 !/base/conf/
+!/base/conf/cuda/
+!/base/conf/cuda/shell/
+!/base/conf/cuda/shell/etc/
+!/base/conf/cuda/shell/etc/profile.d/
 !/base/conf/ipython/
 !/base/conf/ipython/usr/
 !/base/conf/ipython/usr/local/
@@ -62,6 +66,7 @@
 !/base/assets/opt/code-server/src/browser/media/css/*.css
 !/base/assets/opt/code-server/src/browser/media/fonts/*.woff
 !/base/assets/opt/code-server/src/browser/media/fonts/*.woff2
+!/base/conf/cuda/shell/etc/profile.d/*.sh
 !/base/conf/ipython/usr/local/etc/ipython/ipython_config.py
 !/base/conf/jupyter/etc/jupyter/jupyter_server_config.py
 !/base/conf/jupyterlab/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json
