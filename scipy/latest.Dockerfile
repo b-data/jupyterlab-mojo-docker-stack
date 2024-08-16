@@ -12,12 +12,12 @@ ARG BUILD_ON_IMAGE
 ARG CODE_BUILTIN_EXTENSIONS_DIR
 ARG QUARTO_VERSION
 ARG CTAN_REPO
+ARG CTAN_REPO_BUILD_LATEST
 
 USER root
 
 ENV PARENT_IMAGE=${BUILD_ON_IMAGE}${MOJO_VERSION:+:}${MOJO_VERSION} \
-    QUARTO_VERSION=${QUARTO_VERSION} \
-    CTAN_REPO=${CTAN_REPO}
+    QUARTO_VERSION=${QUARTO_VERSION}
 
 ENV HOME=/root \
     PATH=/opt/TinyTeX/bin/linux:/opt/quarto/bin:$PATH
@@ -52,6 +52,8 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
   && apt-get -y purge equivs \
   && apt-get -y autoremove \
   ## Admin-based install of TinyTeX
+  && CTAN_REPO=${CTAN_REPO_BUILD_LATEST:-$CTAN_REPO} \
+  && export CTAN_REPO \
   && wget -qO- "https://yihui.org/tinytex/install-unx.sh" \
     | sh -s - --admin --no-path \
   && mv ${HOME}/.TinyTeX /opt/TinyTeX \
@@ -137,6 +139,8 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
 
 ## Switch back to ${NB_USER} to avoid accidental container runs as root
 USER ${NB_USER}
+
+ENV CTAN_REPO=${CTAN_REPO}
 
 ENV HOME=/home/${NB_USER}
 
