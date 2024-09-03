@@ -30,6 +30,7 @@ base → scipy
     code.
   * **Git LFS**: A Git extension for versioning large files.
   * **Mojo**: A programming language for AI developers.
+  * **Neovim**: Vim-fork focused on extensibility and usability. (24.4.0+)
   * **Pandoc**: A universal markup converter.
   * **Python**: An interpreted, object-oriented, high-level programming language
     with dynamic semantics.
