@@ -8,13 +8,14 @@ ARG CUDA_IMAGE_FLAVOR
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
-ARG JUPYTERHUB_VERSION=5.0.0
-ARG JUPYTERLAB_VERSION=4.2.1
+ARG JUPYTERHUB_VERSION=5.1.0
+ARG JUPYTERLAB_VERSION=4.2.5
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.89.1
-ARG GIT_VERSION=2.45.2
+ARG CODE_SERVER_VERSION=4.92.2
+ARG NEOVIM_VERSION=0.10.1
+ARG GIT_VERSION=2.46.1
 ARG GIT_LFS_VERSION=3.5.1
-ARG PANDOC_VERSION=3.1.11
+ARG PANDOC_VERSION=3.2
 
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS files
 
@@ -30,6 +31,7 @@ COPY conf/ipython /files
 COPY conf/jupyter /files
 COPY conf/jupyterlab /files
 COPY conf/shell /files
+COPY conf${CUDA_IMAGE:+/cuda}/shell /files
 COPY conf/user /files
 COPY scripts /files
 
@@ -65,6 +67,7 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
   && find /files/usr/local/bin -type f -exec chmod 755 {} \; \
   && find /files/etc/profile.d -type f -exec chmod 755 {} \;
 
+FROM glcr.b-data.ch/neovim/nvsi:${NEOVIM_VERSION} AS nvsi
 FROM glcr.b-data.ch/git/gsi/${GIT_VERSION}/${BASE_IMAGE}:${BASE_IMAGE_TAG} AS gsi
 FROM glcr.b-data.ch/git-lfs/glfsi:${GIT_LFS_VERSION} AS glfsi
 
@@ -81,6 +84,7 @@ ARG JUPYTERHUB_VERSION
 ARG JUPYTERLAB_VERSION
 ARG CODE_BUILTIN_EXTENSIONS_DIR
 ARG CODE_SERVER_VERSION
+ARG NEOVIM_VERSION
 ARG GIT_VERSION
 ARG GIT_LFS_VERSION
 ARG PANDOC_VERSION
@@ -106,12 +110,15 @@ ENV PARENT_IMAGE=${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IM
     JUPYTERHUB_VERSION=${JUPYTERHUB_VERSION} \
     JUPYTERLAB_VERSION=${JUPYTERLAB_VERSION} \
     CODE_SERVER_VERSION=${CODE_SERVER_VERSION} \
+    NEOVIM_VERSION=${NEOVIM_VERSION} \
     GIT_VERSION=${GIT_VERSION} \
     GIT_LFS_VERSION=${GIT_LFS_VERSION} \
     PANDOC_VERSION=${PANDOC_VERSION}
 
 ENV NB_GID=100
 
+## Install Neovim
+COPY --from=nvsi /usr/local /usr/local
 ## Install Git
 COPY --from=gsi /usr/local /usr/local
 ## Install Git LFS
@@ -151,6 +158,8 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     vim-tiny \
     wget \
     zsh \
+    ## Neovim: Additional runtime recommendations
+    ripgrep \
     ## Git: Additional runtime dependencies
     libcurl3-gnutls \
     liberror-perl \
@@ -178,12 +187,10 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     done; \
   else \
     ## Force update pip, setuptools and wheel
-    curl -sLO https://bootstrap.pypa.io/get-pip.py; \
-    python get-pip.py \
+    pip install --upgrade --force-reinstall \
       pip \
       setuptools \
       wheel; \
-    rm get-pip.py; \
   fi \
   ## Modular: Additional runtime dependencies
   && apt-get -y install --no-install-recommends \
@@ -207,8 +214,8 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
   && dpkg -i pandoc-${PANDOC_VERSION}-1-${dpkgArch}.deb \
   && rm pandoc-${PANDOC_VERSION}-1-${dpkgArch}.deb \
   ## Delete potential user with UID 1000
-  && if $(grep -q 1000 /etc/passwd); then \
-    userdel $(id -un 1000); \
+  && if grep -q 1000 /etc/passwd; then \
+    userdel --remove $(id -un 1000); \
   fi \
   ## Do not set user limits for sudo/sudo-i
   && sed -i 's/.*pam_limits.so/#&/g' /etc/pam.d/sudo \

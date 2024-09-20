@@ -30,6 +30,7 @@ base → scipy
     code.
   * **Git LFS**: A Git extension for versioning large files.
   * **Mojo**: A programming language for AI developers.
+  * **Neovim**: Vim-fork focused on extensibility and usability. (24.4.0+)
   * **Pandoc**: A universal markup converter.
   * **Python**: An interpreted, object-oriented, high-level programming language
     with dynamic semantics.
@@ -103,6 +104,7 @@ The following extensions are pre-installed for **code-server**:
 * [Prerequisites](#prerequisites)
 * [Install](#install)
 * [Usage](#usage)
+* [Misc](#misc)
 * [Similar projects](#similar-projects)
 * [Contributing](#contributing)
 * [Support](#support)
@@ -127,10 +129,10 @@ latest:
 
 ```bash
 cd base && docker build \
-  --build-arg MODULAR_VERSION=0.8.0 \
+  --build-arg MODULAR_VERSION=0.9.2 \
   --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
-  --build-arg MOJO_VERSION=24.3.0 \
-  --build-arg PYTHON_VERSION=3.12.4 \
+  --build-arg MOJO_VERSION=24.4.0 \
+  --build-arg PYTHON_VERSION=3.12.6 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
@@ -235,6 +237,27 @@ docker run -it --rm \
 
 *might* be sufficient.
 
+## Misc
+
+### marimo
+
+To add a JupyterLab Launcher icon for marimo:
+
+1. Terminal: Install [marimo](https://marimo.io) and click
+
+   ```bash
+   pip install marimo click
+   ```
+
+1. Terminal: Install
+   [jupyter-marimo-proxy](https://github.com/b-data/jupyter-marimo-proxy/tree/jupyterlab-docker-stack)
+
+   ```bash
+   pip install git+https://github.com/b-data/jupyter-marimo-proxy.git@jupyterlab-docker-stack
+   ```
+
+1. Restart the container
+
 ## Similar projects
 
 * [modularml/mojo](https://github.com/modularml/mojo/tree/main/examples)
@@ -245,7 +268,7 @@ What makes this project different:
    :information_source: Runs on Apple M series using Docker Desktop.
 1. Base image: [Debian](https://hub.docker.com/_/debian) instead of
    [Ubuntu](https://hub.docker.com/_/ubuntu)  
-   :information_source: Upcoming: CUDA-enabled images are Ubuntu-based.
+   :information_source: Upcoming: CUDA-based images use Ubuntu.
 1. IDE: [code-server](https://github.com/coder/code-server) next to
    [JupyterLab](https://github.com/jupyterlab/jupyterlab)  
    :information_source: code-server =
@@ -266,7 +289,9 @@ This project follows the
 
 ## Support
 
-For commercial support, please contact b-data by email: <support@b-data.ch>.
+Community support: Open a new disussion
+[here](https://github.com/orgs/b-data/discussions). Commercial support: Contact
+b-data by [email](mailto:support@b-data.ch).
 
 b-data tailors the JupyterLab images to your needs, e.g.
 
