@@ -324,8 +324,7 @@ RUN curl -ssL https://magic.modular.com | bash \
     /opt/modular/bin/mblack \
   ## Fix permissions
   && chown -R root:${NB_GID} /opt/modular \
-  && chmod -R g+w /opt/modular \
-  && chmod -R g+rx ${MODULAR_HOME}/crashdb
+  && chmod -R g+w ${MODULAR_HOME}
 
 ## Install the Mojo kernel for Jupyter
 RUN mkdir -p /usr/local/share/jupyter/kernels \
