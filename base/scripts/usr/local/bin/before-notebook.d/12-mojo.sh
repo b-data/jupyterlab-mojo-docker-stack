@@ -16,10 +16,10 @@ fi
 # MAX SDK: Create symlink to /opt/modular
 if [ "$(id -u)" == 0 ] ; then
   run_user_group mkdir -p "$extDataDir/magic-data-home/envs"
-  run_user_group ln -s /opt/modular "$extDataDir/magic-data-home/envs/max"
+  run_user_group ln -snf /opt/modular "$extDataDir/magic-data-home/envs/max"
   run_user_group mkdir -p "$extDataDir/versionDone/$sdkVersion"
 else
   mkdir -p "$extDataDir/magic-data-home/envs"
-  ln -s /opt/modular "$extDataDir/magic-data-home/envs/max"
+  ln -snf /opt/modular "$extDataDir/magic-data-home/envs/max"
   mkdir -p "$extDataDir/versionDone/$sdkVersion"
 fi
