@@ -133,7 +133,6 @@ latest:
 ```bash
 cd base && docker build \
   --build-arg MOJO_VERSION=24.5.0 \
-  --build-arg INSTALL_MAX=false \
   --build-arg PYTHON_VERSION=3.12.7 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
@@ -144,7 +143,6 @@ version:
 ```bash
 cd base && docker build \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
-  --build-arg INSTALL_MAX=false \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```
 
@@ -293,7 +291,7 @@ This project follows the
 
 ## Support
 
-Community support: Open a new disussion
+Community support: Open a new discussion
 [here](https://github.com/orgs/b-data/discussions). Commercial support: Contact
 b-data by [email](mailto:support@b-data.ch).
 
