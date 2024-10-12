@@ -1,4 +1,4 @@
-# JupyterLab Mojo docker stack
+# JupyterLab Mojo (MAX) docker stack
 
 <!-- markdownlint-disable line-length -->
 [![minimal-readme compliant](https://img.shields.io/badge/readme%20style-minimal-brightgreen.svg)](https://github.com/RichardLitt/standard-readme/blob/master/example-readmes/minimal-readme.md) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) <a href="https://liberapay.com/benz0li/donate"><img src="https://liberapay.com/assets/widgets/donate.svg" alt="Donate using Liberapay" height="20"></a>
@@ -8,6 +8,8 @@ Multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images:
 
 * [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
 * [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
+* [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
+* [`glcr.b-data.ch/jupyterlab/max/scipy`](https://gitlab.b-data.ch/jupyterlab/max/scipy/container_registry)
 
 Images considered stable for Mojo versions ≥ 24.3.0.
 
@@ -29,6 +31,7 @@ base → scipy
   * **Git**: A distributed version-control system for tracking changes in source
     code.
   * **Git LFS**: A Git extension for versioning large files.
+  * **MAX**: A high-performance generative AI framework.
   * **Mojo**: A programming language for AI developers.
   * **Neovim**: Vim-fork focused on extensibility and usability. (24.4.0+)
   * **Pandoc**: A universal markup converter.
@@ -130,6 +133,7 @@ latest:
 ```bash
 cd base && docker build \
   --build-arg MOJO_VERSION=24.5.0 \
+  --build-arg INSTALL_MAX=false \
   --build-arg PYTHON_VERSION=3.12.7 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
@@ -140,6 +144,7 @@ version:
 ```bash
 cd base && docker build \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
+  --build-arg INSTALL_MAX=false \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```
 
@@ -188,6 +193,8 @@ docker run -it --rm \
 
 * [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
 * [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
+* [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
+* [`glcr.b-data.ch/jupyterlab/max/scipy`](https://gitlab.b-data.ch/jupyterlab/max/scipy/container_registry)
 
 The use of the `-v` flag in the command mounts the empty directory on the host
 (`${PWD}/jupyterlab-jovyan` in the command) as `/home/jovyan` in the container.

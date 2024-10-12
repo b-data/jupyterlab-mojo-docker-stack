@@ -183,7 +183,7 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
       setuptools \
       wheel; \
   fi \
-  ## Mojo/MAX: Additional runtime dependency
+  ## Mojo (MAX): Additional runtime dependency
   && apt-get -y install --no-install-recommends libncurses-dev \
   ## mblack: Additional Python dependencies
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
@@ -249,7 +249,7 @@ RUN curl -ssL https://magic.modular.com | bash \
   ## Clean up
   && rm -rf $HOME/.modular \
   && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/* \
-  ## Install Mojo/MAX
+  ## Install Mojo (MAX)
   && cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ "${MOJO_VERSION}" = "nightly" ]; then \
@@ -430,7 +430,7 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
 
 ENV PATH=/opt/modular/bin:$PATH
 
-## Install Mojo/MAX
+## Install Mojo (MAX)
 COPY --from=modular /opt /opt
 ## Install the Mojo kernel for Jupyter
 COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
@@ -438,7 +438,7 @@ COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
 COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
   /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
 
-## Mojo/MAX: Install Python dependencies
+## Mojo (MAX): Install Python dependencies
 RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     packages=$(grep "Requires-Dist:" \
