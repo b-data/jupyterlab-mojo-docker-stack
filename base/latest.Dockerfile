@@ -443,15 +443,15 @@ RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
     > /tmp/magicenv \
   && cp /tmp/magicenv /var/tmp/magicenv \
   && chown ${NB_UID}:${NB_GID} /tmp/magicenv /var/tmp/magicenv \
-  ## Create the magic bin dir
+  ## Create the user's modular bin dir
   && . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
-  ## Append the magic bin dir to PATH
+  ## Append the user's modular bin dir to PATH
   && sed -i 's/\$HOME/\\$HOME/g' /var/tmp/magicenv \
   && . /var/tmp/magicenv \
-  && echo "\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc \
+  && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc \
     /etc/skel/.bashrc \
-  ## Create the magic bin dir in the skeleton directory
+  ## Create the user's modular bin dir in the skeleton directory
   && HOME=/etc/skel . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
   ## Mojo (MAX): Install Python dependencies
@@ -484,12 +484,12 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
   && ${HOME}/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f \
   && sed -i 's/ZSH="\/home\/jovyan\/.oh-my-zsh"/ZSH="$HOME\/.oh-my-zsh"/g' ${HOME}/.zshrc \
   && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ${HOME}/.zshrc \
-  ## Create the magic bin dir
+  ## Create the user's modular bin dir
   && . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
-  ## Append the magic bin dir to PATH
+  ## Append the user's modular bin dir to PATH
   && . /var/tmp/magicenv \
-  && echo "\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
+  && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   ## Clean up
   && rm -rf /tmp/magicenv \
     /var/tmp/magicenv \
