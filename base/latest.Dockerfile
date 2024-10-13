@@ -183,7 +183,7 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
       setuptools \
       wheel; \
   fi \
-  ## Mojo (MAX): Additional runtime dependency
+  ## MAX/Mojo: Additional runtime dependency
   && apt-get -y install --no-install-recommends libncurses-dev \
   ## mblack: Additional Python dependencies
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
@@ -249,7 +249,7 @@ RUN curl -ssL https://magic.modular.com | bash \
   ## Clean up
   && rm -rf ${HOME}/.modular \
   && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/* \
-  ## Install Mojo (MAX)
+  ## Install MAX/Mojo
   && cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ "${MOJO_VERSION}" = "nightly" ]; then \
@@ -431,7 +431,7 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
 ENV PATH=/opt/modular/bin:$PATH
 ENV MAGIC_NO_PATH_UPDATE=1
 
-## Install Mojo (MAX)
+## Install MAX/Mojo
 COPY --from=modular /opt /opt
 ## Install the Mojo kernel for Jupyter
 COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
@@ -454,7 +454,7 @@ RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
   ## Create the user's modular bin dir in the skeleton directory
   && HOME=/etc/skel . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
-  ## Mojo (MAX): Install Python dependencies
+  ## MAX/Mojo: Install Python dependencies
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     packages=$(grep "Requires-Dist:" \
