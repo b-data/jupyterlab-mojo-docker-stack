@@ -4,6 +4,8 @@
 
 set -e
 
+MODULAR_HOME_BAK="$MODULAR_HOME"
+
 # Append the user's modular bin dir to PATH
 if [ "$(id -u)" == 0 ] ; then
   if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"; then
@@ -48,6 +50,9 @@ else
     rm /tmp/magicenv
   fi
 fi
+
+MODULAR_HOME="$MODULAR_HOME_BAK"
+unset MODULAR_HOME_BAK
 
 # MAX SDK: Evaluate and set version
 if [ "$(id -u)" == 0 ] ; then
