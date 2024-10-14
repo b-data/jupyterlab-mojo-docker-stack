@@ -441,14 +441,15 @@ COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
 
 RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
     > /tmp/magicenv \
-  && cp /tmp/magicenv /var/tmp/magicenv \
-  && chown ${NB_UID}:${NB_GID} /tmp/magicenv /var/tmp/magicenv \
+  && cp /tmp/magicenv /var/tmp/magicenv.bak \
+  && cp /tmp/magicenv /tmp/magicenv.mod \
+  && chown ${NB_UID}:${NB_GID} /tmp/magicenv /tmp/magicenv.mod \
   ## Create the user's modular bin dir
   && . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
   ## Append the user's modular bin dir to PATH
-  && sed -i 's/\$HOME/\\$HOME/g' /var/tmp/magicenv \
-  && . /var/tmp/magicenv \
+  && sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv.mod \
+  && . /tmp/magicenv.mod \
   && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc \
     /etc/skel/.bashrc \
   ## Create the user's modular bin dir in the skeleton directory
@@ -488,11 +489,11 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
   && . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
   ## Append the user's modular bin dir to PATH
-  && . /var/tmp/magicenv \
+  && . /tmp/magicenv.mod \
   && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   ## Clean up
   && rm -rf /tmp/magicenv \
-    /var/tmp/magicenv \
+    /tmp/magicenv.mod \
   ## Customise the bash/zsh run commands
   && echo "\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/bin\" ] && [[ \"\$PATH\" != *\"\$HOME/bin\"* ]] ; then\n    PATH=\"\$HOME/bin:\$PATH\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   && echo "\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/.local/bin\" ] && [[ \"\$PATH\" != *\"\$HOME/.local/bin\"* ]] ; then\n    PATH=\"\$HOME/.local/bin:\$PATH\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
