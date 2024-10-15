@@ -6,10 +6,10 @@
 
 Multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images:
 
-* [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
-* [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
 * [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
 * [`glcr.b-data.ch/jupyterlab/max/scipy`](https://gitlab.b-data.ch/jupyterlab/max/scipy/container_registry)
+* [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
+* [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
 
 Images considered stable for Mojo versions ≥ 24.3.0.
 
@@ -47,6 +47,9 @@ base → scipy
 
 :point_right: See the [Version Matrix](VERSION_MATRIX.md) for detailed
 information.
+
+:information_source: Regading [Magic](https://docs.modular.com/magic/), see
+[[(JupyterLab) MAX/Mojo docker stack] Why is Magic not installed?](https://github.com/orgs/b-data/discussions/5)
 
 The following extensions are pre-installed for **code-server**:
 
@@ -189,10 +192,10 @@ docker run -it --rm \
 
 `IMAGE` being one of
 
-* [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
-* [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
 * [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
 * [`glcr.b-data.ch/jupyterlab/max/scipy`](https://gitlab.b-data.ch/jupyterlab/max/scipy/container_registry)
+* [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
+* [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
 
 The use of the `-v` flag in the command mounts the empty directory on the host
 (`${PWD}/jupyterlab-jovyan` in the command) as `/home/jovyan` in the container.
