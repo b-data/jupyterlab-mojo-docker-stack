@@ -1,25 +1,23 @@
 ARG BASE_IMAGE=debian
 ARG BASE_IMAGE_TAG=12
 ARG BUILD_ON_IMAGE=glcr.b-data.ch/python/ver
-ARG MODULAR_VERSION
 ARG MOJO_VERSION
+ARG MOJO_EXTENSION_VERSION=${MOJO_VERSION}
 ARG PYTHON_VERSION
 ARG CUDA_IMAGE_FLAVOR
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
-ARG JUPYTERHUB_VERSION=5.1.0
-ARG JUPYTERLAB_VERSION=4.2.5
+ARG JUPYTERHUB_VERSION=5.2.1
+ARG JUPYTERLAB_VERSION=4.2.6
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.92.2
-ARG NEOVIM_VERSION=0.10.1
-ARG GIT_VERSION=2.46.1
-ARG GIT_LFS_VERSION=3.5.1
-ARG PANDOC_VERSION=3.2
+ARG CODE_SERVER_VERSION=4.95.3
+ARG NEOVIM_VERSION=0.10.2
+ARG GIT_VERSION=2.47.1
+ARG GIT_LFS_VERSION=3.6.0
+ARG PANDOC_VERSION=3.4
 
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS files
-
-ARG INSTALL_MAX
 
 ARG NB_UID
 ENV NB_GID=100
@@ -44,13 +42,6 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
     /files/usr/local/share/jupyter/lab/static/assets \
   && cp -a /files/opt/code-server/src/browser/media/fonts \
     /files/usr/local/share/jupyter/lab/static/assets \
-  ## Update Modular setup
-  && if [ "${INSTALL_MAX}" = "1" -o "${INSTALL_MAX}" = "true" ]; then \
-    sed -i s/packages.modular.com_mojo/packages.modular.com_max/g \
-      /files/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json; \
-    sed -i s/packages.modular.com_mojo/packages.modular.com_max/g \
-      /files/etc/profile.d/00-reset-path.sh; \
-  fi \
   && if [ -n "${CUDA_VERSION}" ]; then \
     ## Use entrypoint of CUDA image
     mv /opt/nvidia/entrypoint.d /opt/nvidia/nvidia_entrypoint.sh \
@@ -103,7 +94,7 @@ LABEL org.opencontainers.image.licenses="$IMAGE_LICENSE" \
       org.opencontainers.image.authors="$IMAGE_AUTHORS"
 
 ENV PARENT_IMAGE=${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} \
-    MODULAR_HOME=/opt/modular \
+    MODULAR_HOME=/opt/modular/share/max \
     MOJO_VERSION=${MOJO_VERSION%%-*} \
     NB_USER=${NB_USER} \
     NB_UID=${NB_UID} \
@@ -169,7 +160,7 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     ## Python: For h5py wheels (arm64)
     libhdf5-dev \
   ## Python: Additional dev dependencies
-  && if [ -z "$PYTHON_VERSION" ]; then \
+  && if [ -z "${PYTHON_VERSION}" ]; then \
     apt-get -y install --no-install-recommends \
       python3-dev \
       ## Install Python package installer
@@ -192,10 +183,16 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
       setuptools \
       wheel; \
   fi \
-  ## Modular: Additional runtime dependencies
-  && apt-get -y install --no-install-recommends \
-    libtinfo-dev \
-    libxml2-dev \
+  ## MAX/Mojo: Additional runtime dependency
+  && apt-get -y install --no-install-recommends libncurses-dev \
+  ## mblack: Additional Python dependencies
+  && export PIP_BREAK_SYSTEM_PACKAGES=1 \
+  && pip install \
+    click \
+    mypy-extensions \
+    packaging \
+    pathspec \
+    platformdirs \
   ## Install font MesloLGS NF
   && mkdir -p /usr/share/fonts/truetype/meslo \
   && curl -sL https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Regular.ttf" \
@@ -239,56 +236,118 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
   && rm -rf /var/lib/apt/lists/* \
     ${HOME}/.cache
 
-FROM base as modular
+FROM base AS modular
 
-ARG MODULAR_VERSION
-ARG MODULAR_NO_AUTH
-ARG MODULAR_AUTH_KEY
+ARG NB_GID=100
+
 ARG MOJO_VERSION
-ARG MOJO_VERSION_FULL=${MOJO_VERSION}
 ARG INSTALL_MAX
 
-## Install Modular
-RUN dpkgArch="$(dpkg --print-architecture)" \
-  && apt-get update \
-  && apt-get -y install --no-install-recommends \
-    libtinfo-dev \
-    libxml2-dev \
-  && curl -sSL https://dl.modular.com/public/installer/deb/debian/pool/any-version/main/m/mo/modular_${MODULAR_VERSION}/modular-v${MODULAR_VERSION}-${dpkgArch}.deb \
-    -o modular.deb \
-  && dpkg --ignore-depends=python3,python3-pip,python3-venv -i modular.deb \
-  && rm modular.deb \
+  ## Install Magic
+RUN curl -ssL https://magic.modular.com | bash \
+  && mv ${HOME}/.modular/bin/magic /usr/local/bin \
   ## Clean up
-  && rm -rf /var/lib/apt/lists/*
-
-## Install Mojo or MAX
-RUN modular config-set telemetry.enabled=false \
-  && modular config-set crash_reporting.enabled=false \
-  && if [ "${MODULAR_NO_AUTH}" != "1" ] && [ "${MODULAR_NO_AUTH}" != "true" ]; then \
-    modular auth \
-      "${MODULAR_AUTH_KEY:-$(echo -n "${NB_USER}" | sha256sum | cut -c -8)}"; \
+  && rm -rf ${HOME}/.modular \
+  && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/* \
+  ## Install MAX/Mojo
+  && cd /tmp \
+  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
+    if [ "${MOJO_VERSION}" = "nightly" ]; then \
+      magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
+      magic add max; \
+    else \
+      magic init -c conda-forge -c https://conda.modular.com/max; \
+      magic add max==${MOJO_VERSION}; \
+    fi \
+  else \
+    if [ "${MOJO_VERSION}" = "nightly" ]; then \
+      magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
+      magic add mojo-jupyter; \
+    else \
+      magic init -c conda-forge -c https://conda.modular.com/max; \
+      magic add mojo-jupyter==${MOJO_VERSION}; \
+    fi \
+  fi \
+  ## Disable telemetry
+  && magic telemetry --disable \
+  ## Get rid of all the unnecessary stuff
+  ## and move installation to /opt/modular
+  && mkdir -p /opt/modular/bin \
+  && mkdir -p /opt/modular/lib \
+  && mkdir -p /opt/modular/share \
+  && cd /tmp/.magic/envs \
+  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
+    cp -a default/bin/max /opt/modular/bin; \
+    cp -a default/lib/libDevice* \
+      default/lib/libGenericMLSupport* \
+      default/lib/libmodular* \
+      default/lib/libmof.so \
+      default/lib/*MOGG* \
+      default/lib/libmonnx.so \
+      default/lib/libmtorch.so \
+      default/lib/libServe* \
+      default/lib/libStock* \
+      default/lib/libTorch* \
+      /opt/modular/lib; \
   fi \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    modular install --install-version "${MOJO_VERSION}" max; \
-  else \
-    modular install --install-version "${MOJO_VERSION_FULL}" mojo; \
+    cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
+      /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
   fi \
-  && chown -R root:${NB_GID} ${MODULAR_HOME} \
-  && chmod -R g+w ${MODULAR_HOME} \
-  && chmod -R g+rx ${MODULAR_HOME}/crashdb \
-  ## Clean up
-  && rm -rf ${MODULAR_HOME}/.*_cache
+  && cp -a default/bin/lldb* \
+    default/bin/mblack \
+    default/bin/modular* \
+    default/bin/mojo* \
+    /opt/modular/bin \
+  && cp -a default/lib/libAsyncRT* \
+    default/lib/libCUDA* \
+    default/lib/libKGENCompilerRT* \
+    default/lib/liblldb* \
+    default/lib/libMojo* \
+    default/lib/libMSupport* \
+    default/lib/liborc_rt.a \
+    default/lib/lldb* \
+    default/lib/mojo* \
+    /opt/modular/lib \
+  && cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/*mblack* \
+    default/lib/python${PYTHON_VERSION%.*}/site-packages/mblib* \
+    /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
+  && cp -a default/share/max /opt/modular/share \
+  && cp -a default/test /opt/modular \
+  && mkdir ${MODULAR_HOME}/crashdb \
+  && rm ${MODULAR_HOME}/firstActivation \
+  ## Fix Modular home for Mojo
+  && sed -i "s|/tmp/.magic/envs/default|/opt/modular|g" \
+    ${MODULAR_HOME}/modular.cfg \
+  ## Fix Python path for mblack
+  && sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
+    /opt/modular/bin/mblack \
+  ## Fix permissions
+  && chown -R root:${NB_GID} /opt/modular \
+  && chmod -R g+w ${MODULAR_HOME}
 
 ## Install the Mojo kernel for Jupyter
 RUN mkdir -p /usr/local/share/jupyter/kernels \
-  && mv ${HOME}/.local/share/jupyter/kernels/mojo* \
+  && mv /tmp/.magic/envs/default/share/jupyter/kernels/mojo* \
     /usr/local/share/jupyter/kernels/ \
   ## Fix Modular home in the Mojo kernel for Jupyter
-  && grep -rl ${HOME}/.local /usr/local/share/jupyter/kernels/mojo* | \
-    xargs sed -i "s|${HOME}/.local|/usr/local|g"
+  && grep -rl /tmp/.magic/envs/default/share/jupyter /usr/local/share/jupyter/kernels/mojo* | \
+    xargs sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
+  && grep -rl /usr/local/share/max /usr/local/share/jupyter/kernels/mojo* | \
+    xargs sed -i "s|/usr/local/share/max|/opt/modular/share/max|g" \
+  ## Change display name in the Mojo kernel for Jupyter
+  && sed -i "s|\"display_name\".*|\"display_name\": \"Mojo $MOJO_VERSION ${INSTALL_MAX:+(MAX)}\",|g" \
+    /usr/local/share/jupyter/kernels/mojo*/kernel.json \
+  && if [ "${MOJO_VERSION}" = "nightly" ]; then \
+    cp -a /usr/local/share/jupyter/kernels/mojo*/nightly-logo-64x64.png \
+      /usr/local/share/jupyter/kernels/mojo*/logo-64x64.png; \
+    cp -a /usr/local/share/jupyter/kernels/mojo*/nightly-logo.svg \
+      /usr/local/share/jupyter/kernels/mojo*/logo.svg; \
+  fi
 
 FROM base
 
+ARG MOJO_EXTENSION_VERSION
 ARG INSTALL_MAX
 
 ENV PATH=/opt/code-server/bin:$PATH \
@@ -313,8 +372,8 @@ RUN mkdir /opt/code-server \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension piotrpalarz.vscode-gitignore-generator-1.0.3.vsix \
   && curl -sLO https://dl.b-data.ch/vsix/mutantdino.resourcemonitor-1.0.7.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension mutantdino.resourcemonitor-1.0.7.vsix \
-  && curl -sLO https://dl.b-data.ch/vsix/modular-mojotools.vscode-mojo-${MOJO_VERSION}.vsix \
-  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-${MOJO_VERSION}.vsix \
+  && curl -sLO https://dl.b-data.ch/vsix/modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
+  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension alefragnani.project-manager \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitHub.vscode-pull-request-github \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitLab.gitlab-workflow \
@@ -369,21 +428,41 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && rm -rf /tmp/* \
     ${HOME}/.cache
 
-ARG MODULAR_PKG_BIN=${INSTALL_MAX:+$MODULAR_HOME/pkg/packages.modular.com_max/bin}
-ARG MODULAR_PKG_BIN=${MODULAR_PKG_BIN:-$MODULAR_HOME/pkg/packages.modular.com_mojo/bin}
+ENV PATH=/opt/modular/bin:$PATH
+ENV MAGIC_NO_PATH_UPDATE=1
 
-ENV PATH=${MODULAR_PKG_BIN}:$PATH
-
-## Install Mojo or MAX
+## Install MAX/Mojo
 COPY --from=modular /opt /opt
 ## Install the Mojo kernel for Jupyter
 COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
+## Install Python packages to the site library
+COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
+  /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
 
-## Install the MAX Engine Python package or numpy
-RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
+RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
+    > /tmp/magicenv \
+  && cp /tmp/magicenv /var/tmp/magicenv.bak \
+  && cp /tmp/magicenv /tmp/magicenv.mod \
+  && chown ${NB_UID}:${NB_GID} /tmp/magicenv /tmp/magicenv.mod \
+  ## Create the user's modular bin dir
+  && . /tmp/magicenv \
+  && mkdir -p ${BIN_DIR} \
+  ## Append the user's modular bin dir to PATH
+  && sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv.mod \
+  && . /tmp/magicenv.mod \
+  && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc \
+    /etc/skel/.bashrc \
+  ## Create the user's modular bin dir in the skeleton directory
+  && HOME=/etc/skel . /tmp/magicenv \
+  && mkdir -p ${BIN_DIR} \
+  ## MAX/Mojo: Install Python dependencies
+  && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    pip install --find-links \
-      ${MODULAR_HOME}/pkg/packages.modular.com_max/wheels max-engine; \
+    packages=$(grep "Requires-Dist:" \
+      /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
+      sed "s|Requires-Dist: \(.*\)|\1|" | \
+      tr -d "[:blank:]"); \
+    pip install $packages; \
   else \
     pip install numpy; \
   fi \
@@ -406,6 +485,16 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
   && ${HOME}/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f \
   && sed -i 's/ZSH="\/home\/jovyan\/.oh-my-zsh"/ZSH="$HOME\/.oh-my-zsh"/g' ${HOME}/.zshrc \
   && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ${HOME}/.zshrc \
+  ## Create the user's modular bin dir
+  && . /tmp/magicenv \
+  && mkdir -p ${BIN_DIR} \
+  ## Append the user's modular bin dir to PATH
+  && . /tmp/magicenv.mod \
+  && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
+  ## Clean up
+  && rm -rf /tmp/magicenv \
+    /tmp/magicenv.mod \
+  ## Customise the bash/zsh run commands
   && echo "\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/bin\" ] && [[ \"\$PATH\" != *\"\$HOME/bin\"* ]] ; then\n    PATH=\"\$HOME/bin:\$PATH\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   && echo "\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/.local/bin\" ] && [[ \"\$PATH\" != *\"\$HOME/.local/bin\"* ]] ; then\n    PATH=\"\$HOME/.local/bin:\$PATH\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   && echo "\n# Update last-activity timestamps while in screen/tmux session\nif [ ! -z \"\$TMUX\" -o ! -z \"\$STY\" ] ; then\n    busy &\nfi" >> ${HOME}/.bashrc \

@@ -1,4 +1,4 @@
-# JupyterLab Mojo docker stack
+# JupyterLab MAX/Mojo docker stack
 
 <!-- markdownlint-disable line-length -->
 [![minimal-readme compliant](https://img.shields.io/badge/readme%20style-minimal-brightgreen.svg)](https://github.com/RichardLitt/standard-readme/blob/master/example-readmes/minimal-readme.md) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) <a href="https://liberapay.com/benz0li/donate"><img src="https://liberapay.com/assets/widgets/donate.svg" alt="Donate using Liberapay" height="20"></a>
@@ -6,6 +6,8 @@
 
 Multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images:
 
+* [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
+* [`glcr.b-data.ch/jupyterlab/max/scipy`](https://gitlab.b-data.ch/jupyterlab/max/scipy/container_registry)
 * [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
 * [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
 
@@ -29,6 +31,7 @@ base → scipy
   * **Git**: A distributed version-control system for tracking changes in source
     code.
   * **Git LFS**: A Git extension for versioning large files.
+  * **MAX**: A high-performance generative AI framework.
   * **Mojo**: A programming language for AI developers.
   * **Neovim**: Vim-fork focused on extensibility and usability. (24.4.0+)
   * **Pandoc**: A universal markup converter.
@@ -44,6 +47,9 @@ base → scipy
 
 :point_right: See the [Version Matrix](VERSION_MATRIX.md) for detailed
 information.
+
+:information_source: Regading [Magic](https://docs.modular.com/magic/), see
+[[(JupyterLab) MAX/Mojo docker stack] Why is Magic not installed?](https://github.com/orgs/b-data/discussions/5)
 
 The following extensions are pre-installed for **code-server**:
 
@@ -129,10 +135,8 @@ latest:
 
 ```bash
 cd base && docker build \
-  --build-arg MODULAR_VERSION=0.9.2 \
-  --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
-  --build-arg MOJO_VERSION=24.4.0 \
-  --build-arg PYTHON_VERSION=3.12.6 \
+  --build-arg MOJO_VERSION=24.5.0 \
+  --build-arg PYTHON_VERSION=3.12.8 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
@@ -141,7 +145,6 @@ version:
 
 ```bash
 cd base && docker build \
-  --build-arg MODULAR_AUTH_KEY=<your-modular-auth-key> \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```
@@ -189,6 +192,8 @@ docker run -it --rm \
 
 `IMAGE` being one of
 
+* [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
+* [`glcr.b-data.ch/jupyterlab/max/scipy`](https://gitlab.b-data.ch/jupyterlab/max/scipy/container_registry)
 * [`glcr.b-data.ch/jupyterlab/mojo/base`](https://gitlab.b-data.ch/jupyterlab/mojo/base/container_registry)
 * [`glcr.b-data.ch/jupyterlab/mojo/scipy`](https://gitlab.b-data.ch/jupyterlab/mojo/scipy/container_registry)
 
@@ -289,7 +294,7 @@ This project follows the
 
 ## Support
 
-Community support: Open a new disussion
+Community support: Open a new discussion
 [here](https://github.com/orgs/b-data/discussions). Commercial support: Contact
 b-data by [email](mailto:support@b-data.ch).
 

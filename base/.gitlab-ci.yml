@@ -1,9 +1,9 @@
 .env:
   variables:
-    MODULAR_VERSION: "0.9.2"
-    MOJO_VERSION: "24.4.0"
-    PYTHON_VERSION: "3.12.6"
-    TAG_VERSION_MAJ_MIN: "true"
+    MOJO_VERSION: "24.5.0"
+    MOJO_EXTENSION_VERSION: "24.5.6"
+    PYTHON_VERSION: "3.12.8"
+    TAG_VERSION_MAJ_MIN: "false"
     TAG_VERSION_MAJ: "false"
 
 .before-script-build: &before-script-build
@@ -68,8 +68,8 @@ build:latest-linux-amd64:
       --build-arg BASE_IMAGE
       --build-arg BASE_IMAGE_TAG
       --build-arg BUILD_ON_IMAGE
-      --build-arg MODULAR_VERSION
       --build-arg MOJO_VERSION
+      --build-arg MOJO_EXTENSION_VERSION
       --build-arg INSTALL_MAX
       --build-arg PYTHON_VERSION
       --build-arg CUDA_IMAGE_FLAVOR
@@ -117,8 +117,8 @@ build:latest-linux-arm64v8:
       --build-arg BASE_IMAGE
       --build-arg BASE_IMAGE_TAG
       --build-arg BUILD_ON_IMAGE
-      --build-arg MODULAR_VERSION
       --build-arg MOJO_VERSION
+      --build-arg MOJO_EXTENSION_VERSION
       --build-arg INSTALL_MAX
       --build-arg PYTHON_VERSION
       --build-arg CUDA_IMAGE_FLAVOR
@@ -415,7 +415,7 @@ trigger-latest-build:
     - apk upgrade --no-cache
     - apk add --update --no-cache curl
   script:
-    - curl -X POST -F token=$JUPYTERLAB_MOJO_SCIPY -F ref=main https://gitlab.b-data.ch/api/v4/projects/349/trigger/pipeline
+    - curl -X POST -F token=$JUPYTERLAB_MOJO_TRIGGER_TOKEN -F ref=main $JUPYTERLAB_MOJO_TRIGGER_URL
   rules:
     - if: $CUDA_IMAGE
       when: never
@@ -431,7 +431,7 @@ trigger-version-build:
     - apk upgrade --no-cache
     - apk add --update --no-cache curl
   script:
-    - curl -X POST -F token=$JUPYTERLAB_MOJO_SCIPY -F ref=freeze-version https://gitlab.b-data.ch/api/v4/projects/349/trigger/pipeline
+    - curl -X POST -F token=$JUPYTERLAB_MOJO_TRIGGER_TOKEN -F ref=freeze-version $JUPYTERLAB_MOJO_TRIGGER_URL
   rules:
     - if: $CUDA_IMAGE
       when: never
