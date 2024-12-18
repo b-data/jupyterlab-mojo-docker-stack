@@ -343,6 +343,9 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
       /usr/local/share/jupyter/kernels/mojo*/logo-64x64.png; \
     cp -a /usr/local/share/jupyter/kernels/mojo*/nightly-logo.svg \
       /usr/local/share/jupyter/kernels/mojo*/logo.svg; \
+  else \
+    ## Fix argv --mojo-config-section
+    sed -i "s|max-nightly|max|g" /usr/local/share/jupyter/kernels/mojo*/kernel.json; \
   fi
 
 FROM base
