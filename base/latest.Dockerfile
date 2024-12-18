@@ -277,7 +277,6 @@ RUN curl -ssL https://magic.modular.com | bash \
   && mkdir -p /opt/modular/share \
   && cd /tmp/.magic/envs \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    cp -a default/bin/max /opt/modular/bin; \
     cp -a default/lib/libDevice* \
       default/lib/libGenericMLSupport* \
       default/lib/libmodular* \
@@ -300,9 +299,10 @@ RUN curl -ssL https://magic.modular.com | bash \
     default/bin/mojo* \
     /opt/modular/bin \
   && cp -a default/lib/libAsyncRT* \
-    default/lib/libCUDA* \
+    default/lib/libATenRT.so \
     default/lib/libKGENCompilerRT* \
     default/lib/liblldb* \
+    default/lib/libMGPRT.so \
     default/lib/libMojo* \
     default/lib/libMSupport* \
     default/lib/liborc_rt.a \
