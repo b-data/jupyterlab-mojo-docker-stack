@@ -461,6 +461,11 @@ RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
   ## MAX/Mojo: Install Python dependencies
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
+    if [ -z "${CUDA_VERSION}" ]; then \
+      ## MAX: Prevent installation of PyTorch, its own CUDA runtime
+      ## and the required CUDA binaries/libraries in the regular images
+      sed -i "/torch/d" /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA; \
+    fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
       sed "s|Requires-Dist: \(.*\)|\1|" | \
@@ -524,3 +529,7 @@ CMD ["start-notebook.sh"]
 ARG BUILD_START
 
 ENV BUILD_DATE=${BUILD_START}
+
+## For use with the NVIDIA Container Runtime
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
