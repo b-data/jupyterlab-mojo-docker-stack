@@ -463,9 +463,8 @@ RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ -z "${CUDA_VERSION}" ]; then \
-      ## MAX: Prevent installation of PyTorch, its own CUDA runtime
-      ## and the required CUDA binaries/libraries in the regular images
-      sed -i "/torch/d" /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA; \
+      ## MAX: Install CPU-only version of PyTorch in regular images
+      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"; \
     fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
