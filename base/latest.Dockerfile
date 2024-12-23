@@ -48,7 +48,7 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
   && if [ -n "${CUDA_VERSION}" ]; then \
     ## Use entrypoint of CUDA image
     apt-get update; \
-    apt-get -y install --no-install-recommends git \
+    apt-get -y install --no-install-recommends git; \
     git clone https://gitlab.com/nvidia/container-images/cuda.git \
       /opt/nvidia; \
     mv /opt/nvidia/entrypoint.d /opt/nvidia/nvidia_entrypoint.sh \
