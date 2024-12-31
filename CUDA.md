@@ -7,6 +7,8 @@ GPU accelerated, multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images:
 
 Images available for MAX versions ≥ 24.6.0.
 
+![CUDA screenshot](assets/cuda-screenshot.png)
+
 **Build chain**
 
 The same as the
