@@ -115,8 +115,6 @@ docker run -it --rm \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
   -e NB_UID=$(id -u) \
   -e NB_GID=$(id -g) \
-  -e CHOWN_HOME=yes \
-  -e CHOWN_HOME_OPTS='-R' \
   jupyterlab/cuda/max/base[:MAJOR.MINOR.PATCH]
 ```
 
@@ -130,8 +128,6 @@ docker run -it --rm \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
   -e NB_UID=$(id -u) \
   -e NB_GID=$(id -g) \
-  -e CHOWN_HOME=yes \
-  -e CHOWN_HOME_OPTS='-R' \
   IMAGE[:MAJOR[.MINOR[.PATCH]]]
 ```
 
@@ -146,11 +142,6 @@ The use of the `-v` flag in the command mounts the empty directory on the host
 `-e NB_UID=$(id -u) -e NB_GID=$(id -g)` instructs the startup script to switch
 the user ID and the primary group ID of `${NB_USER}` to the user and group ID of
 the one executing the command.
-
-`-e CHOWN_HOME=yes -e CHOWN_HOME_OPTS='-R'` instructs the startup script to
-recursively change the `${NB_USER}` home directory owner and group to the
-current value of `${NB_UID}` and `${NB_GID}`.  
-:information_source: This is only required for the first run.
 
 The server logs appear in the terminal.
 
