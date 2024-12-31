@@ -94,6 +94,7 @@
 !/.hadolint.yml
 !/.markdownlint.yml
 !/CODE_OF_CONDUCT.md
+!/CUDA.md
 !/DEVTOOLS_NOTES.md
 !/LICENSE
 !/NOTES.md
