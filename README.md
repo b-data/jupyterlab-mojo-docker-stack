@@ -52,7 +52,7 @@ base → scipy
 information.
 
 :information_source: Regading [Magic](https://docs.modular.com/magic/), see
-[[(JupyterLab) MAX/Mojo docker stack] Why is Magic not installed?](https://github.com/orgs/b-data/discussions/5)
+[[(CUDA-based) (JupyterLab) MAX/Mojo docker stack] Why is Magic not installed?](https://github.com/orgs/b-data/discussions/5)
 
 The following extensions are pre-installed for **code-server**:
 
@@ -137,7 +137,8 @@ To install docker, follow the instructions for your platform:
 latest:
 
 ```shell
-cd base && docker build \
+cd base
+docker build \
   --build-arg MOJO_VERSION=24.6.0 \
   --build-arg PYTHON_VERSION=3.12.8 \
   -t jupyterlab/mojo/base \
@@ -147,7 +148,8 @@ cd base && docker build \
 version:
 
 ```shell
-cd base && docker build \
+cd base
+docker build \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```
