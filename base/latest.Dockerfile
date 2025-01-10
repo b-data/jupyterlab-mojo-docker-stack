@@ -260,13 +260,15 @@ ARG MOJO_VERSION
 ARG INSTALL_MAX
 
   ## Install Magic
-RUN curl -ssL https://magic.modular.com | bash \
+RUN export MODULAR_HOME="$HOME/.modular" \
+  && curl -ssL https://magic.modular.com | bash \
   && mv ${HOME}/.modular/bin/magic /usr/local/bin \
   ## Clean up
   && rm -rf ${HOME}/.modular \
-  && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/* \
+  && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/*
+
   ## Install MAX/Mojo
-  && cd /tmp \
+RUN cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ "${MOJO_VERSION}" = "nightly" ]; then \
       magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
@@ -458,8 +460,8 @@ COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
 COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
   /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
 
-RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
-    > /tmp/magicenv \
+RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
+  && curl -ssL https://magic.modular.com | grep '^BIN_DIR' >> /tmp/magicenv \
   && cp /tmp/magicenv /var/tmp/magicenv.bak \
   && cp /tmp/magicenv /tmp/magicenv.mod \
   && chown ${NB_UID}:${NB_GID} /tmp/magicenv /tmp/magicenv.mod \
