@@ -6,13 +6,13 @@ Topmost entry = Tag `latest`
 
 | MAX    | Python | CUDA   | Linux distro |
 |:-------|:-------|:-------|:-------------|
-| 24.6.0 | 3.12.8 | 12.6.3 | Ubuntu 22.04 |
+| 24.6.0 | 3.12.8 | 12.8.0 | Ubuntu 22.04 |
 
 ## PyTorch compatibility
 
 | Python | CUDA | PyTorch[^1]   |
 |:-------|:-----|:--------------|
-| 3.12   | 12.6 | version ≥ 2.2 |
+| 3.12   | 12.8 | version ≥ 2.2 |
 
 [^1]: Ships with its own CUDA dependencies
 
@@ -20,7 +20,7 @@ Topmost entry = Tag `latest`
 
 | CUDA   | Linux driver version | Windows driver version[^2] |
 |:-------|:---------------------|:---------------------------|
-| 12.6.3 | ≥ 560.35.05          | ≥ 561.17                   |
+| 12.8.0 | ≥ 570.26             | ≥ 570.65                   |
 
 [^2]: [GPU support in Docker Desktop | Docker Docs](https://docs.docker.com/desktop/gpu/),
 [Nvidia GPU Support for Windows · Issue #19005 · containers/podman](https://github.com/containers/podman/issues/19005)
@@ -33,7 +33,7 @@ Only works with
 
 | CUDA   | Driver version 535[^3] | Driver version 470[^4] |
 |:-------|:----------------------:|:----------------------:|
-| 12.6.3 | 🟢                      | 🔵                      |
+| 12.8.0 | 🟢                      | 🔵                      |
 
 🔵: Supported due to the CUDA forward compat package  
 🟢: Supported due to minor-version compatibility  

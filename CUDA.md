@@ -189,7 +189,7 @@ docker run -it --rm \
 
 **What makes this project different:**
 
-1. Derived from [`nvidia/cuda:12.6.3-base-ubuntu22.04`](https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=12.6.3-base-ubuntu22.04)
+1. Derived from [`nvidia/cuda:12.8.0-base-ubuntu22.04`](https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=12.8.0-base-ubuntu22.04)
 1. IDE: [code-server](https://github.com/coder/code-server) next to
    [JupyterLab](https://github.com/jupyterlab/jupyterlab)
 1. Just Python – no [Conda](https://github.com/conda/conda) /
