@@ -6,7 +6,7 @@ Topmost entry = Tag `latest`
 
 | MAX    | Python | CUDA   | Linux distro |
 |:-------|:-------|:-------|:-------------|
-| 24.6.0 | 3.12.8 | 12.8.0 | Ubuntu 22.04 |
+| 24.6.0 | 3.12.9 | 12.8.0 | Ubuntu 22.04 |
 
 ## PyTorch compatibility
 
