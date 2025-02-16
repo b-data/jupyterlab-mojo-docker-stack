@@ -1,9 +1,9 @@
 .env:
   variables:
-    MOJO_VERSION: "24.6.0"
+    MOJO_VERSION: "25.1.0"
     CTAN_REPO_BUILD_LATEST: "https://mirror.init7.net/ctan/systems/texlive/tlnet"
-    TAG_VERSION_MAJ_MIN: "true"
-    TAG_VERSION_MAJ: "true"
+    TAG_VERSION_MAJ_MIN: "false"
+    TAG_VERSION_MAJ: "false"
 
 .before-script-build: &before-script-build
   - |
