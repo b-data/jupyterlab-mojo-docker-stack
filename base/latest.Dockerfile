@@ -287,7 +287,7 @@ RUN cd /tmp \
     fi \
   fi \
   ## Disable telemetry
-  && magic telemetry --disable \
+  && magic telemetry --manifest-path pixi.toml --disable \
   ## Get rid of all the unnecessary stuff
   ## and move installation to /opt/modular
   && mkdir -p /opt/modular/bin \
