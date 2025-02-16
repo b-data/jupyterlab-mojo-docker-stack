@@ -302,7 +302,6 @@ RUN cd /tmp \
       default/lib/*MOGG* \
       default/lib/libmonnx.so \
       default/lib/libmtorch.so \
-      default/lib/libServe* \
       default/lib/libStock* \
       default/lib/libTorch* \
       /opt/modular/lib; \
