@@ -9,13 +9,16 @@ ARG CUDA_IMAGE_FLAVOR
 ARG NB_USER=jovyan
 ARG NB_UID=1000
 ARG JUPYTERHUB_VERSION=5.2.1
-ARG JUPYTERLAB_VERSION=4.2.6
+ARG JUPYTERLAB_VERSION=4.3.5
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.95.3
-ARG NEOVIM_VERSION=0.10.2
-ARG GIT_VERSION=2.47.1
-ARG GIT_LFS_VERSION=3.6.0
+ARG CODE_SERVER_VERSION=4.96.4
+ARG NEOVIM_VERSION=0.10.4
+ARG GIT_VERSION=2.48.1
+ARG GIT_LFS_VERSION=3.6.1
 ARG PANDOC_VERSION=3.4
+
+ARG INSTALL_MAX
+ARG BASE_SELECT=${INSTALL_MAX:+max}
 
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS files
 
@@ -44,6 +47,10 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
     /files/usr/local/share/jupyter/lab/static/assets \
   && if [ -n "${CUDA_VERSION}" ]; then \
     ## Use entrypoint of CUDA image
+    apt-get update; \
+    apt-get -y install --no-install-recommends git; \
+    git clone https://gitlab.com/nvidia/container-images/cuda.git \
+      /opt/nvidia; \
     mv /opt/nvidia/entrypoint.d /opt/nvidia/nvidia_entrypoint.sh \
       /files/usr/local/bin; \
     mv /files/usr/local/bin/start.sh \
@@ -62,13 +69,22 @@ FROM glcr.b-data.ch/neovim/nvsi:${NEOVIM_VERSION} AS nvsi
 FROM glcr.b-data.ch/git/gsi/${GIT_VERSION}/${BASE_IMAGE}:${BASE_IMAGE_TAG} AS gsi
 FROM glcr.b-data.ch/git-lfs/glfsi:${GIT_LFS_VERSION} AS glfsi
 
-FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} as base
+FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-max
+
+## For use with the NVIDIA Container Runtime
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
+FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-mojo
+
+FROM base-${BASE_SELECT:-mojo} AS base
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 ARG BUILD_ON_IMAGE
 ARG MOJO_VERSION
 ARG CUDA_IMAGE_FLAVOR
+
 ARG NB_USER
 ARG NB_UID
 ARG JUPYTERHUB_VERSION
@@ -84,7 +100,7 @@ ARG CODE_WORKDIR
 
 ARG CUDA_IMAGE_LICENSE=${CUDA_VERSION:+"NVIDIA Deep Learning Container License"}
 ARG IMAGE_LICENSE=${CUDA_IMAGE_LICENSE:-"MIT"}
-ARG IMAGE_SOURCE=https://gitlab.b-data.ch/jupyterlab/python/docker-stack
+ARG IMAGE_SOURCE=https://gitlab.b-data.ch/jupyterlab/mojo/docker-stack
 ARG IMAGE_VENDOR="b-data GmbH"
 ARG IMAGE_AUTHORS="Olivier Benz <olivier.benz@b-data.ch>"
 
@@ -244,13 +260,15 @@ ARG MOJO_VERSION
 ARG INSTALL_MAX
 
   ## Install Magic
-RUN curl -ssL https://magic.modular.com | bash \
+RUN export MODULAR_HOME="$HOME/.modular" \
+  && curl -ssL https://magic.modular.com | bash \
   && mv ${HOME}/.modular/bin/magic /usr/local/bin \
   ## Clean up
   && rm -rf ${HOME}/.modular \
-  && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/* \
+  && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/*
+
   ## Install MAX/Mojo
-  && cd /tmp \
+RUN cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ "${MOJO_VERSION}" = "nightly" ]; then \
       magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
@@ -277,7 +295,6 @@ RUN curl -ssL https://magic.modular.com | bash \
   && mkdir -p /opt/modular/share \
   && cd /tmp/.magic/envs \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    cp -a default/bin/max /opt/modular/bin; \
     cp -a default/lib/libDevice* \
       default/lib/libGenericMLSupport* \
       default/lib/libmodular* \
@@ -300,9 +317,10 @@ RUN curl -ssL https://magic.modular.com | bash \
     default/bin/mojo* \
     /opt/modular/bin \
   && cp -a default/lib/libAsyncRT* \
-    default/lib/libCUDA* \
+    default/lib/libATenRT.so \
     default/lib/libKGENCompilerRT* \
     default/lib/liblldb* \
+    default/lib/libMGPRT.so \
     default/lib/libMojo* \
     default/lib/libMSupport* \
     default/lib/liborc_rt.a \
@@ -343,6 +361,9 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
       /usr/local/share/jupyter/kernels/mojo*/logo-64x64.png; \
     cp -a /usr/local/share/jupyter/kernels/mojo*/nightly-logo.svg \
       /usr/local/share/jupyter/kernels/mojo*/logo.svg; \
+  else \
+    ## Fix argv --mojo-config-section
+    sed -i "s|max-nightly|max|g" /usr/local/share/jupyter/kernels/mojo*/kernel.json; \
   fi
 
 FROM base
@@ -439,8 +460,8 @@ COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
 COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
   /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
 
-RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
-    > /tmp/magicenv \
+RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
+  && curl -ssL https://magic.modular.com | grep '^BIN_DIR' >> /tmp/magicenv \
   && cp /tmp/magicenv /var/tmp/magicenv.bak \
   && cp /tmp/magicenv /tmp/magicenv.mod \
   && chown ${NB_UID}:${NB_GID} /tmp/magicenv /tmp/magicenv.mod \
@@ -458,6 +479,10 @@ RUN curl -ssL https://magic.modular.com | grep '^MODULAR_HOME\|^BIN_DIR' \
   ## MAX/Mojo: Install Python dependencies
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
+    if [ -z "${CUDA_VERSION}" ]; then \
+      ## MAX: Install CPU-only version of PyTorch in regular images
+      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"; \
+    fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
       sed "s|Requires-Dist: \(.*\)|\1|" | \
@@ -512,7 +537,10 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
 COPY --from=files /files /
 COPY --from=files /files/var/backups/skel ${HOME}
 
-EXPOSE 8888
+ARG JUPYTER_PORT=8888
+ENV JUPYTER_PORT=${JUPYTER_PORT}
+
+EXPOSE $JUPYTER_PORT
 
 ## Configure container startup
 ENTRYPOINT ["tini", "-g", "--", "start.sh"]

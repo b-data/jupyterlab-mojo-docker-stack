@@ -61,6 +61,7 @@
 !/scipy/
 
 !/.github/FUNDING.yml
+!/assets/cuda-screenshot.png
 !/assets/screenshot.png
 !/base/assets/opt/code-server/code-server.svg
 !/base/assets/opt/code-server/src/browser/media/css/*.css
@@ -94,6 +95,8 @@
 !/.hadolint.yml
 !/.markdownlint.yml
 !/CODE_OF_CONDUCT.md
+!/CUDA_VERSION_MATRIX.md
+!/CUDA.md
 !/DEVTOOLS_NOTES.md
 !/LICENSE
 !/NOTES.md

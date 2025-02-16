@@ -4,6 +4,9 @@
 [![minimal-readme compliant](https://img.shields.io/badge/readme%20style-minimal-brightgreen.svg)](https://github.com/RichardLitt/standard-readme/blob/master/example-readmes/minimal-readme.md) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) <a href="https://liberapay.com/benz0li/donate"><img src="https://liberapay.com/assets/widgets/donate.svg" alt="Donate using Liberapay" height="20"></a>
 <!-- markdownlint-enable line-length -->
 
+| See the [CUDA-based JupyterLab MAX docker stack](CUDA.md) for GPU accelerated docker images. |
+|:---------------------------------------------------------------------------------------------|
+
 Multi-arch (`linux/amd64`, `linux/arm64/v8`) docker images:
 
 * [`glcr.b-data.ch/jupyterlab/max/base`](https://gitlab.b-data.ch/jupyterlab/max/base/container_registry)
@@ -49,7 +52,7 @@ base → scipy
 information.
 
 :information_source: Regading [Magic](https://docs.modular.com/magic/), see
-[[(JupyterLab) MAX/Mojo docker stack] Why is Magic not installed?](https://github.com/orgs/b-data/discussions/5)
+[[(CUDA-based) (JupyterLab) MAX/Mojo docker stack] Why is Magic not installed?](https://github.com/orgs/b-data/discussions/5)
 
 The following extensions are pre-installed for **code-server**:
 
@@ -133,18 +136,20 @@ To install docker, follow the instructions for your platform:
 
 latest:
 
-```bash
-cd base && docker build \
-  --build-arg MOJO_VERSION=24.5.0 \
-  --build-arg PYTHON_VERSION=3.12.8 \
+```shell
+cd base
+docker build \
+  --build-arg MOJO_VERSION=24.6.0 \
+  --build-arg PYTHON_VERSION=3.12.9 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
 
 version:
 
-```bash
-cd base && docker build \
+```shell
+cd base
+docker build \
   -t jupyterlab/mojo/base:MAJOR.MINOR.PATCH \
   -f MAJOR.MINOR.PATCH.Dockerfile .
 ```
@@ -155,7 +160,7 @@ For `MAJOR.MINOR.PATCH` ≥ `24.3.0`.
 
 Create an empty directory using docker:
 
-```bash
+```shell
 docker run --rm \
   -v "${PWD}/jupyterlab-jovyan":/dummy \
   alpine chown 1000:100 /dummy
@@ -168,7 +173,7 @@ automatically populated.
 
 self built:
 
-```bash
+```shell
 docker run -it --rm \
   -p 8888:8888 \
   -u root \
@@ -180,7 +185,7 @@ docker run -it --rm \
 
 from the project's GitLab Container Registries:
 
-```bash
+```shell
 docker run -it --rm \
   -p 8888:8888 \
   -u root \
@@ -210,13 +215,13 @@ The server logs appear in the terminal.
 
 Create an empty home directory:
 
-```bash
+```shell
 mkdir "${PWD}/jupyterlab-root"
 ```
 
 Use the following command to run the container as `root`:
 
-```bash
+```shell
 podman run -it --rm \
   -p 8888:8888 \
   -u root \
@@ -233,7 +238,7 @@ podman run -it --rm \
 [Creating a home directory](#create-home-directory) *might* not be required.
 Also
 
-```bash
+```shell
 docker run -it --rm \
   -p 8888:8888 \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
@@ -250,14 +255,14 @@ To add a JupyterLab Launcher icon for marimo:
 
 1. Terminal: Install [marimo](https://marimo.io) and click
 
-   ```bash
+   ```shell
    pip install marimo click
    ```
 
 1. Terminal: Install
    [jupyter-marimo-proxy](https://github.com/b-data/jupyter-marimo-proxy/tree/jupyterlab-docker-stack)
 
-   ```bash
+   ```shell
    pip install git+https://github.com/b-data/jupyter-marimo-proxy.git@jupyterlab-docker-stack
    ```
 
@@ -265,7 +270,7 @@ To add a JupyterLab Launcher icon for marimo:
 
 ## Similar projects
 
-* [modularml/mojo](https://github.com/modularml/mojo/tree/main/examples)
+* [modularml/mojo](https://github.com/modularml/mojo/tree/71b1af69dedfe1390b588ffd6755a97f7ade71de/examples)
 
 What makes this project different:
 
@@ -273,7 +278,7 @@ What makes this project different:
    :information_source: Runs on Apple M series using Docker Desktop.
 1. Base image: [Debian](https://hub.docker.com/_/debian) instead of
    [Ubuntu](https://hub.docker.com/_/ubuntu)  
-   :information_source: Upcoming: CUDA-based images use Ubuntu.
+   :information_source: CUDA-based images use Ubuntu.
 1. IDE: [code-server](https://github.com/coder/code-server) next to
    [JupyterLab](https://github.com/jupyterlab/jupyterlab)  
    :information_source: code-server =
