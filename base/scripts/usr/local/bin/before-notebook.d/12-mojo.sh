@@ -9,8 +9,9 @@ MODULAR_HOME_BAK="$MODULAR_HOME"
 # Append the user's modular bin dir to PATH
 if [ "$(id -u)" == 0 ] ; then
   if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"; then
+    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
     (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^MODULAR_HOME\|^BIN_DIR' | tee /tmp/magicenv > /dev/null
+      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
     . <(sed 's|\$HOME|/home/\$NB_USER\${DOMAIN:+@\$DOMAIN}|g' /tmp/magicenv)
     run_user_group mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
@@ -19,8 +20,9 @@ if [ "$(id -u)" == 0 ] ; then
     rm /tmp/magicenv
   fi
   if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.zshrc"; then
+    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
     (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^MODULAR_HOME\|^BIN_DIR' | tee /tmp/magicenv > /dev/null
+      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
     . <(sed 's|\$HOME|/home/\$NB_USER\${DOMAIN:+@\$DOMAIN}|g' /tmp/magicenv)
     run_user_group mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
@@ -30,8 +32,9 @@ if [ "$(id -u)" == 0 ] ; then
   fi
 else
   if ! grep -q "user's modular bin dir" "$HOME/.bashrc"; then
+    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
     (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^MODULAR_HOME\|^BIN_DIR' | tee /tmp/magicenv > /dev/null
+      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
     . /tmp/magicenv
     mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
@@ -40,8 +43,9 @@ else
     rm /tmp/magicenv
   fi
   if ! grep -q "user's modular bin dir" "$HOME/.zshrc"; then
+    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
     (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^MODULAR_HOME\|^BIN_DIR' | tee /tmp/magicenv > /dev/null
+      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
     . /tmp/magicenv
     mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
