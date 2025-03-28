@@ -66,7 +66,7 @@ docker build \
   --build-arg BASE_IMAGE=ubuntu \
   --build-arg BASE_IMAGE_TAG=22.04 \
   --build-arg BUILD_ON_IMAGE=glcr.b-data.ch/cuda/python/ver \
-  --build-arg MOJO_VERSION=24.6.0 \
+  --build-arg MOJO_VERSION=25.1.0 \
   --build-arg PYTHON_VERSION=3.12.9 \
   --build-arg CUDA_IMAGE_FLAVOR=base \
   --build-arg INSTALL_MAX=1 \
@@ -189,7 +189,7 @@ docker run -it --rm \
 
 **What makes this project different:**
 
-1. Derived from [`nvidia/cuda:12.8.0-base-ubuntu22.04`](https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=12.8.0-base-ubuntu22.04)
+1. Derived from [`nvidia/cuda:-base-ubuntu22.04`](https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=-base-ubuntu22.04)
 1. IDE: [code-server](https://github.com/coder/code-server) next to
    [JupyterLab](https://github.com/jupyterlab/jupyterlab)
 1. Just Python – no [Conda](https://github.com/conda/conda) /
