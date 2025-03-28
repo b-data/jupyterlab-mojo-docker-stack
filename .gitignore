@@ -47,6 +47,7 @@
 !/base/conf/user/var/backups/skel/.local/share/
 !/base/conf/user/var/backups/skel/.local/share/code-server/
 !/base/conf/user/var/backups/skel/.local/share/code-server/User/
+!/base/requirements/
 !/base/scripts/
 !/base/scripts/usr/
 !/base/scripts/usr/local/
@@ -77,6 +78,7 @@
 !/base/conf/shell/etc/zsh/zprofile
 !/base/conf/user/var/backups/skel/.p10k.zsh
 !/base/conf/user/var/backups/skel/.local/share/code-server/User/settings.json
+!/base/requirements/*requirements.txt
 !/base/scripts/usr/local/bin/busy
 !/base/scripts/usr/local/bin/*.sh
 !/base/scripts/usr/local/bin/before-notebook.d/*.sh
