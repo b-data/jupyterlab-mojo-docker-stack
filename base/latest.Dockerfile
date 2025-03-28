@@ -501,6 +501,8 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
       sed "s|Requires-Dist: \(.*\)|\1|" | \
+      cut -d ";" -f 1 | \
+      sed "s|xgrammar==|xgrammar>=|g" | \
       tr -d "[:blank:]"); \
     pip install $packages; \
   else \
