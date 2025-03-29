@@ -106,7 +106,7 @@ ARG PANDOC_VERSION
 ARG CODE_WORKDIR
 
 ARG CUDA_IMAGE_LICENSE=${CUDA_VERSION:+"NVIDIA Deep Learning Container License"}
-ARG IMAGE_LICENSE=${CUDA_IMAGE_LICENSE:-"MIT"}
+ARG IMAGE_LICENSE=${CUDA_IMAGE_LICENSE:-"MAX Community License"}
 ARG IMAGE_SOURCE=https://gitlab.b-data.ch/jupyterlab/mojo/docker-stack
 ARG IMAGE_VENDOR="b-data GmbH"
 ARG IMAGE_AUTHORS="Olivier Benz <olivier.benz@b-data.ch>"
