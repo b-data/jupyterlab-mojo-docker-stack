@@ -10,8 +10,7 @@ MODULAR_HOME_BAK="$MODULAR_HOME"
 if [ "$(id -u)" == 0 ] ; then
   if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"; then
     echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
+    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
     . <(sed 's|\$HOME|/home/\$NB_USER\${DOMAIN:+@\$DOMAIN}|g' /tmp/magicenv)
     run_user_group mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
@@ -21,8 +20,7 @@ if [ "$(id -u)" == 0 ] ; then
   fi
   if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.zshrc"; then
     echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
+    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
     . <(sed 's|\$HOME|/home/\$NB_USER\${DOMAIN:+@\$DOMAIN}|g' /tmp/magicenv)
     run_user_group mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
@@ -33,8 +31,7 @@ if [ "$(id -u)" == 0 ] ; then
 else
   if ! grep -q "user's modular bin dir" "$HOME/.bashrc"; then
     echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
+    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
     . /tmp/magicenv
     mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
@@ -44,8 +41,7 @@ else
   fi
   if ! grep -q "user's modular bin dir" "$HOME/.zshrc"; then
     echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    (curl -ssL https://magic.modular.com || cat /var/tmp/magicenv.bak) \
-      | grep '^BIN_DIR' | tee -a /tmp/magicenv > /dev/null
+    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
     . /tmp/magicenv
     mkdir -p "${BIN_DIR}"
     sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
