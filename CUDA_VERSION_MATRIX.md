@@ -4,11 +4,11 @@ Image tags = MAX versions
 
 Topmost entry = Tag `latest`
 
-| MAX    | Python | CUDA   | Linux distro |
-|:-------|:-------|:-------|:-------------|
-| 25.2.0 | 3.12.9 | 12.8.1 | Ubuntu 22.04 |
-| 25.1.0 | 3.12.9 | 12.8.1 | Ubuntu 22.04 |
-| 24.6.0 | 3.12.9 | 12.8.0 | Ubuntu 22.04 |
+| MAX    | Python  | CUDA   | Linux distro |
+|:-------|:--------|:-------|:-------------|
+| 25.2.0 | 3.12.10 | 12.8.1 | Ubuntu 22.04 |
+| 25.1.0 | 3.12.9  | 12.8.1 | Ubuntu 22.04 |
+| 24.6.0 | 3.12.9  | 12.8.0 | Ubuntu 22.04 |
 
 ## PyTorch compatibility
 
