@@ -22,3 +22,14 @@ if (
         + os.pathsep
         + os.getenv("PATH", "")
     )
+
+if (
+    os.path.exists(os.path.join(os.environ["HOME"], ".modular", "bin"))
+    and not os.path.join(os.environ["HOME"], ".modular", "bin")
+    in os.getenv("PATH", "")
+):
+    os.environ["PATH"] = (
+        os.getenv("PATH", "")
+        + os.pathsep
+        + os.path.join(os.environ["HOME"], ".modular", "bin")
+    )

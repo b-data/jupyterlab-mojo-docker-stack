@@ -8,14 +8,14 @@ ARG CUDA_IMAGE_FLAVOR
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
-ARG JUPYTERHUB_VERSION=5.2.1
-ARG JUPYTERLAB_VERSION=4.3.6
+ARG JUPYTERHUB_VERSION=5.3.0
+ARG JUPYTERLAB_VERSION=4.4.1
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.98.2
-ARG NEOVIM_VERSION=0.10.4
+ARG CODE_SERVER_VERSION=4.99.3
+ARG NEOVIM_VERSION=0.11.1
 ARG GIT_VERSION=2.49.0
 ARG GIT_LFS_VERSION=3.6.1
-ARG PANDOC_VERSION=3.4
+ARG PANDOC_VERSION=3.6.3
 
 ARG INSTALL_MAX
 ARG BASE_SELECT=${INSTALL_MAX:+max}
@@ -69,16 +69,22 @@ FROM glcr.b-data.ch/neovim/nvsi:${NEOVIM_VERSION} AS nvsi
 FROM glcr.b-data.ch/git/gsi/${GIT_VERSION}/${BASE_IMAGE}:${BASE_IMAGE_TAG} AS gsi
 FROM glcr.b-data.ch/git-lfs/glfsi:${GIT_LFS_VERSION} AS glfsi
 
-FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-max
+FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-cuda-max
 
 ## For use with the NVIDIA Container Runtime
 ENV NVIDIA_VISIBLE_DEVICES=all
 ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_PRODUCT_NAME=CUDA
 
+FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-max
+
+## For use with the NVIDIA Container Runtime
+ENV NVIDIA_VISIBLE_DEVICES=all
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-mojo
 
-FROM base-${BASE_SELECT:-mojo} AS base
+FROM base${CUDA_IMAGE_FLAVOR:+-cuda}-${BASE_SELECT:-mojo} AS base
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -100,7 +106,7 @@ ARG PANDOC_VERSION
 ARG CODE_WORKDIR
 
 ARG CUDA_IMAGE_LICENSE=${CUDA_VERSION:+"NVIDIA Deep Learning Container License"}
-ARG IMAGE_LICENSE=${CUDA_IMAGE_LICENSE:-"MIT"}
+ARG IMAGE_LICENSE=${CUDA_IMAGE_LICENSE:-"MAX Community License"}
 ARG IMAGE_SOURCE=https://gitlab.b-data.ch/jupyterlab/mojo/docker-stack
 ARG IMAGE_VENDOR="b-data GmbH"
 ARG IMAGE_AUTHORS="Olivier Benz <olivier.benz@b-data.ch>"
@@ -470,7 +476,7 @@ COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
   /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
 
 RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
-  && curl -ssL https://magic.modular.com | grep '^BIN_DIR' >> /tmp/magicenv \
+  && echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv \
   && cp /tmp/magicenv /var/tmp/magicenv.bak \
   && cp /tmp/magicenv /tmp/magicenv.mod \
   && chown ${NB_UID}:${NB_GID} /tmp/magicenv /tmp/magicenv.mod \
@@ -495,6 +501,8 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
       sed "s|Requires-Dist: \(.*\)|\1|" | \
+      cut -d ";" -f 1 | \
+      sed "s|xgrammar==|xgrammar>=|g" | \
       tr -d "[:blank:]"); \
     pip install $packages; \
   else \

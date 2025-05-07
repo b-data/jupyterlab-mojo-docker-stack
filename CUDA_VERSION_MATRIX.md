@@ -4,10 +4,11 @@ Image tags = MAX versions
 
 Topmost entry = Tag `latest`
 
-| MAX    | Python | CUDA   | Linux distro |
-|:-------|:-------|:-------|:-------------|
-| 25.1.0 | 3.12.9 | 12.8.1 | Ubuntu 22.04 |
-| 24.6.0 | 3.12.9 | 12.8.0 | Ubuntu 22.04 |
+| MAX    | Python  | CUDA   | Linux distro |
+|:-------|:--------|:-------|:-------------|
+| 25.2.0 | 3.12.10 | 12.8.1 | Ubuntu 22.04 |
+| 25.1.0 | 3.12.9  | 12.8.1 | Ubuntu 22.04 |
+| 24.6.0 | 3.12.9  | 12.8.0 | Ubuntu 22.04 |
 
 ## PyTorch compatibility
 
@@ -38,9 +39,10 @@ Only works with
 | 12.8.1 | 🟢                      | 🔵                      |
 | 12.8.0 | 🟢                      | 🔵                      |
 
-🔵: Supported due to the CUDA forward compat package  
-🟢: Supported due to minor-version compatibility  
+🔵: Supported with the CUDA forward compat package only  
+🟢: Supported due to minor-version compatibility[^5]  
 🟡: Supported due to backward compatibility
 
 [^3]: EOL: June 2026  
 [^4]: EOL: July 2024
+[^5]: or the CUDA forward compat package
