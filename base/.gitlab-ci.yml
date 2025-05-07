@@ -1,9 +1,9 @@
 .env:
   variables:
-    MOJO_VERSION: "25.2.0"
-    MOJO_EXTENSION_VERSION: "25.2.0"
-    PYTHON_VERSION: "3.12.10"
-    TAG_VERSION_MAJ_MIN: "true"
+    MOJO_VERSION: "25.3.0"
+    MOJO_EXTENSION_VERSION: "25.3.0"
+    PYTHON_VERSION: "3.13.3"
+    TAG_VERSION_MAJ_MIN: "false"
     TAG_VERSION_MAJ: "false"
 
 .before-script-build: &before-script-build
