@@ -492,6 +492,8 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
   && HOME=/etc/skel . /tmp/magicenv \
   && mkdir -p ${BIN_DIR} \
   ## MAX/Mojo: Install Python dependencies
+  && apt-get update \
+  && apt-get -y install --no-install-recommends cmake \
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ -z "${CUDA_VERSION}" ]; then \
@@ -509,7 +511,10 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
     pip install numpy; \
   fi \
   ## Clean up
-  && rm -rf ${HOME}/.cache
+  && apt-get -y purge cmake \
+  && apt-get -y autoremove \
+  && rm -rf ${HOME}/.cache \
+    /var/lib/apt/lists/*
 
 ## Switch back to ${NB_USER} to avoid accidental container runs as root
 USER ${NB_USER}
