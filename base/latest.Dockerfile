@@ -11,7 +11,7 @@ ARG NB_UID=1000
 ARG JUPYTERHUB_VERSION=5.3.0
 ARG JUPYTERLAB_VERSION=4.4.2
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.100.0
+ARG CODE_SERVER_VERSION=4.100.2
 ARG NEOVIM_VERSION=0.11.1
 ARG GIT_VERSION=2.49.0
 ARG GIT_LFS_VERSION=3.6.1
@@ -323,7 +323,6 @@ RUN cd /tmp \
     default/bin/mojo* \
     /opt/modular/bin \
   && cp -a default/lib/libAsyncRT* \
-    default/lib/libATenRT.so \
     default/lib/libKGENCompilerRT* \
     default/lib/liblldb* \
     default/lib/libMGPRT.so \
