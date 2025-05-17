@@ -279,18 +279,18 @@ RUN cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     if [ "${MOJO_VERSION}" = "nightly" ]; then \
       magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
-      magic add max max-pipelines; \
+      magic add max max-pipelines python==${PYTHON_VERSION%.*}; \
     else \
       magic init -c conda-forge -c https://conda.modular.com/max; \
-      magic add max==${MOJO_VERSION} max-pipelines==${MOJO_VERSION}; \
+      magic add max==${MOJO_VERSION} max-pipelines==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
     fi \
   else \
     if [ "${MOJO_VERSION}" = "nightly" ]; then \
       magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
-      magic add mojo-jupyter; \
+      magic add mojo-jupyter python==${PYTHON_VERSION%.*}; \
     else \
       magic init -c conda-forge -c https://conda.modular.com/max; \
-      magic add mojo-jupyter==${MOJO_VERSION}; \
+      magic add mojo-jupyter==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
     fi \
   fi \
   ## Disable telemetry
