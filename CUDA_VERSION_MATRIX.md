@@ -6,18 +6,17 @@ Topmost entry = Tag `latest`
 
 | MAX    | Python  | CUDA   | Linux distro |
 |:-------|:--------|:-------|:-------------|
-| 25.3.0 | 3.13.3  | 12.9.0 | Ubuntu 22.04 |
+| 25.3.0 | 3.12.10 | 12.9.0 | Ubuntu 22.04 |
 | 25.2.0 | 3.12.10 | 12.8.1 | Ubuntu 22.04 |
 | 25.1.0 | 3.12.9  | 12.8.1 | Ubuntu 22.04 |
 | 24.6.0 | 3.12.9  | 12.8.0 | Ubuntu 22.04 |
 
 ## PyTorch compatibility
 
-| Python | CUDA | PyTorch[^1]                  |
-|:-------|:-----|:-----------------------------|
-| 3.13   | 12.9 | version ≥ 2.5 (experimental) |
-| 3.13   | 12.8 | version ≥ 2.5 (experimental) |
-| 3.12   | 12.8 | version ≥ 2.4                |
+| Python | CUDA | PyTorch[^1]   |
+|:-------|:-----|:--------------|
+| 3.12   | 12.9 | version ≥ 2.4 |
+| 3.12   | 12.8 | version ≥ 2.4 |
 
 [^1]: Ships with its own CUDA dependencies
 
