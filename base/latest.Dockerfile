@@ -498,6 +498,8 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
     if [ -z "${CUDA_VERSION}" ]; then \
       ## MAX: Install CPU-only version of PyTorch in regular images
       export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"; \
+    else \
+      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu126"; \
     fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
