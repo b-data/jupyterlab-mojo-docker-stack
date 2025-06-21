@@ -306,10 +306,9 @@ RUN cd /tmp \
       /opt/modular/bin; \
     cp -a default/lib/libDevice* \
       default/lib/libGenericMLSupport* \
+      default/lib/libmax.so \
       default/lib/libmodular* \
-      default/lib/libmof.so \
       default/lib/*MOGG* \
-      default/lib/libmonnx.so \
       default/lib/libmtorch.so \
       default/lib/libStock* \
       default/lib/libTorch* \
@@ -323,6 +322,7 @@ RUN cd /tmp \
     default/bin/mojo* \
     /opt/modular/bin \
   && cp -a default/lib/libAsyncRT* \
+    default/lib/libATenRT.so \
     default/lib/libKGENCompilerRT* \
     default/lib/liblldb* \
     default/lib/libMGPRT.so \
