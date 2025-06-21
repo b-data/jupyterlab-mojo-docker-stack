@@ -306,11 +306,9 @@ RUN cd /tmp \
       /opt/modular/bin; \
     cp -a default/lib/libDevice* \
       default/lib/libGenericMLSupport* \
+      default/lib/libmax.so \
       default/lib/libmodular* \
-      default/lib/libmof.so \
       default/lib/*MOGG* \
-      default/lib/libmonnx.so \
-      default/lib/libmtorch.so \
       default/lib/libStock* \
       default/lib/libTorch* \
       /opt/modular/lib; \
@@ -499,7 +497,7 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
       ## MAX: Install CPU-only version of PyTorch in regular images
       export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"; \
     else \
-      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu126"; \
+      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"; \
     fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
