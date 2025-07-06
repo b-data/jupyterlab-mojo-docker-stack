@@ -344,6 +344,7 @@ RUN cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     ## Fix Python path for max-serve, max-pipelines
     sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
+      /opt/modular/bin/max \
       /opt/modular/bin/max-serve \
       /opt/modular/bin/max-pipelines; \
   fi \
