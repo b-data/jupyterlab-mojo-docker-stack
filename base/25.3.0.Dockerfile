@@ -345,6 +345,7 @@ RUN cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     ## Fix Python path for max-serve, max-pipelines
     sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
+      /opt/modular/bin/max \
       /opt/modular/bin/max-serve \
       /opt/modular/bin/max-pipelines; \
   fi \
@@ -463,6 +464,7 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && rm -rf /tmp/* \
     ${HOME}/.cache
 
+ENV LD_LIBRARY_PATH=/opt/modular/lib${LD_LIBRARY_PATH:+:}${LD_LIBRARY_PATH}
 ENV PATH=/opt/modular/bin:$PATH
 ENV MAGIC_NO_PATH_UPDATE=1
 
