@@ -315,7 +315,8 @@ RUN cd /tmp \
     cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
   fi \
-  && cp -a default/bin/lldb* \
+  && cp -a default/bin/lld \
+    default/bin/lldb* \
     default/bin/mblack \
     default/bin/modular* \
     default/bin/mojo* \
