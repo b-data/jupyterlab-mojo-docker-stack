@@ -463,6 +463,7 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && rm -rf /tmp/* \
     ${HOME}/.cache
 
+ENV LD_LIBRARY_PATH=/opt/modular/lib${LD_LIBRARY_PATH:+:}${LD_LIBRARY_PATH}
 ENV PATH=/opt/modular/bin:$PATH
 ENV MAGIC_NO_PATH_UPDATE=1
 
