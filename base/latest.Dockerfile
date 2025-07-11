@@ -13,7 +13,7 @@ ARG JUPYTERLAB_VERSION=4.4.4
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
 ARG CODE_SERVER_VERSION=4.101.2
 ARG NEOVIM_VERSION=0.11.2
-ARG GIT_VERSION=2.50.0
+ARG GIT_VERSION=2.50.1
 ARG GIT_LFS_VERSION=3.7.0
 ARG PANDOC_VERSION=3.6.3
 
@@ -342,7 +342,7 @@ RUN cd /tmp \
   && sed -i "s|/tmp/.magic/envs/default|/opt/modular|g" \
     ${MODULAR_HOME}/modular.cfg \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    ## Fix Python path for max-serve, max-pipelines
+    ## Fix Python path for max, max-serve, max-pipelines
     sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
       /opt/modular/bin/max \
       /opt/modular/bin/max-serve \
