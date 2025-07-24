@@ -132,8 +132,7 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension quarto.quarto \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension James-Yu.latex-workshop \
   ## Update default PATH settings in /etc/profile.d/00-reset-path.sh
-  && sed -i 's|/opt/modular/pkg/packages.modular.com_max/bin:/opt/code-server/bin|/opt/TinyTeX/bin/linux:/opt/quarto/bin:/opt/modular/pkg/packages.modular.com_max/bin:/opt/code-server/bin|g' /etc/profile.d/00-reset-path.sh \
-  && sed -i 's|/opt/modular/pkg/packages.modular.com_mojo/bin:/opt/code-server/bin|/opt/TinyTeX/bin/linux:/opt/quarto/bin:/opt/modular/pkg/packages.modular.com_mojo/bin:/opt/code-server/bin|g' /etc/profile.d/00-reset-path.sh \
+  && sed -i 's|/opt/modular/bin:/opt/code-server/bin|/opt/TinyTeX/bin/linux:/opt/quarto/bin:/opt/modular/bin:/opt/code-server/bin|g' /etc/profile.d/00-reset-path.sh \
   ## Clean up
   && rm -rf /tmp/* \
   && rm -rf /var/lib/apt/lists/* \
