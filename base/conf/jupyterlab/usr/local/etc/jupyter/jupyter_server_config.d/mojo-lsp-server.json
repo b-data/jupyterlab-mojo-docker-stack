@@ -3,7 +3,7 @@
     "language_servers": {
       "mojo": {
         "argv": [
-          "/usr/local/bin/mojo-lsp-server",
+          "/opt/modular/bin/mojo-lsp-server",
           "--log=error"
         ],
         "version": 2,

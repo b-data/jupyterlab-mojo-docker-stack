@@ -58,6 +58,14 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
     mv /files/usr/local/bin/nvidia_entrypoint.sh \
       /files/usr/local/bin/start.sh; \
   fi \
+  ## Fix default PATH settings
+  && sed -i "s|/opt/modular/bin:||g" /files/etc/profile.d/00-reset-path.sh \
+  ## Fix path for the Mojo LSP server
+  && sed -i "s|/opt/modular|/usr/local|g" \
+    /files/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json \
+  ## MAX SDK: Fix path for symlink
+  && sed -i "s|/opt/modular|/usr/local|g" \
+    /files/usr/local/bin/before-notebook.d/12-mojo.sh \
   ## Ensure file modes are correct when using CI
   ## Otherwise set to 777 in the target image
   && find /files -type d -exec chmod 755 {} \; \
