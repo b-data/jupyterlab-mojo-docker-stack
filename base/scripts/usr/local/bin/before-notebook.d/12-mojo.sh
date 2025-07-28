@@ -4,55 +4,26 @@
 
 set -e
 
-MODULAR_HOME_BAK="$MODULAR_HOME"
-
-# Append the user's modular bin dir to PATH
+# Append the user's pixi bin dir to PATH
 if [ "$(id -u)" == 0 ] ; then
-  if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"; then
-    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
-    . <(sed 's|\$HOME|/home/\$NB_USER\${DOMAIN:+@\$DOMAIN}|g' /tmp/magicenv)
-    run_user_group mkdir -p "${BIN_DIR}"
-    sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
-    . /tmp/magicenv
-    echo -e "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" >> "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"
-    rm /tmp/magicenv
+  if ! grep -q "user's pixi bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"; then
+    run_user_group mkdir -p "${HOME}/.pixi/bin"
+    echo -e "\n# Append the user's pixi bin dir to PATH\nif [[ \"\$PATH\" != *\"\$HOME/.pixi/bin\"* ]] ; then\n    PATH=\"\$PATH:\$HOME/.pixi/bin\"\nfi" >> "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.bashrc"
   fi
-  if ! grep -q "user's modular bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.zshrc"; then
-    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
-    . <(sed 's|\$HOME|/home/\$NB_USER\${DOMAIN:+@\$DOMAIN}|g' /tmp/magicenv)
-    run_user_group mkdir -p "${BIN_DIR}"
-    sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
-    . /tmp/magicenv
-    echo -e "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" >> "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.zshrc"
-    rm /tmp/magicenv
+  if ! grep -q "user's pixi bin dir" "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.zshrc"; then
+    run_user_group mkdir -p "${HOME}/.pixi/bin"
+    echo -e "\n# Append the user's pixi bin dir to PATH\nif [[ \"\$PATH\" != *\"\$HOME/.pixi/bin\"* ]] ; then\n    PATH=\"\$PATH:\$HOME/.pixi/bin\"\nfi" >> "/home/$NB_USER${DOMAIN:+@$DOMAIN}/.zshrc"
   fi
 else
-  if ! grep -q "user's modular bin dir" "$HOME/.bashrc"; then
-    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
-    . /tmp/magicenv
-    mkdir -p "${BIN_DIR}"
-    sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
-    . /tmp/magicenv
-    echo -e "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" >> "$HOME/.bashrc"
-    rm /tmp/magicenv
+  if ! grep -q "user's pixi bin dir" "$HOME/.bashrc"; then
+    mkdir -p "${HOME}/.pixi/bin"
+    echo -e "\n# Append the user's pixi bin dir to PATH\nif [[ \"\$PATH\" != *\"\$HOME/.pixi/bin\"* ]] ; then\n    PATH=\"\$PATH:\$HOME/.pixi/bin\"\nfi" >> "$HOME/.bashrc"
   fi
-  if ! grep -q "user's modular bin dir" "$HOME/.zshrc"; then
-    echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv
-    echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv
-    . /tmp/magicenv
-    mkdir -p "${BIN_DIR}"
-    sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv
-    . /tmp/magicenv
-    echo -e "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" >> "$HOME/.zshrc"
-    rm /tmp/magicenv
+  if ! grep -q "user's pixi bin dir" "$HOME/.zshrc"; then
+    mkdir -p "${HOME}/.pixi/bin"
+    echo -e "\n# Append the user's pixi bin dir to PATH\nif [[ \"\$PATH\" != *\"\$HOME/.pixi/bin\"* ]] ; then\n    PATH=\"\$PATH:\$HOME/.pixi/bin\"\nfi" >> "$HOME/.zshrc"
   fi
 fi
-
-MODULAR_HOME="$MODULAR_HOME_BAK"
-unset MODULAR_HOME_BAK
 
 # MAX SDK: Evaluate and set version
 if [ "$(id -u)" == 0 ] ; then
@@ -73,13 +44,13 @@ else
   fi
 fi
 
-# MAX SDK: Create symlink to /opt/modular
+# MAX SDK: Create symlink to /usr/local
 if [ "$(id -u)" == 0 ] ; then
   run_user_group mkdir -p "$extDataDir/magic-data-home/envs"
-  run_user_group ln -snf /opt/modular "$extDataDir/magic-data-home/envs/max"
+  run_user_group ln -snf /usr/local "$extDataDir/magic-data-home/envs/max"
   run_user_group mkdir -p "$extDataDir/versionDone/$sdkVersion"
 else
   mkdir -p "$extDataDir/magic-data-home/envs"
-  ln -snf /opt/modular "$extDataDir/magic-data-home/envs/max"
+  ln -snf /usr/local "$extDataDir/magic-data-home/envs/max"
   mkdir -p "$extDataDir/versionDone/$sdkVersion"
 fi
