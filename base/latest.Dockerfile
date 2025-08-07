@@ -344,7 +344,13 @@ RUN cd /tmp \
     /opt/modular/bin/mblack \
   ## Fix permissions
   && chown -R root:${NB_GID} ${MODULAR_HOME} \
-  && chmod -R g+w ${MODULAR_HOME}
+  && chmod -R g+w ${MODULAR_HOME} \
+  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
+    chown -R root:${NB_GID} \
+      /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max; \
+    chmod -R g+w \
+      /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max; \
+  fi
 
 ## Install the Mojo kernel for Jupyter
 RUN mkdir -p /usr/local/share/jupyter/kernels \
