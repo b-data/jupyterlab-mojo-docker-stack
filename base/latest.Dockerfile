@@ -474,12 +474,6 @@ RUN mkdir -p ${HOME}/.pixi/bin \
   && apt-get -y install --no-install-recommends cmake \
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    if [ -z "${CUDA_VERSION}" ]; then \
-      ## MAX: Install CPU-only version of PyTorch in regular images
-      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"; \
-    else \
-      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"; \
-    fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
       sed "s|Requires-Dist: \(.*\)|\1|" | \
