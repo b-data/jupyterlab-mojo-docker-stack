@@ -396,16 +396,13 @@ RUN mkdir /opt/code-server \
   && sed -i 's|</head>|	<link rel="stylesheet" type="text/css" href="{{BASE}}/_static/src/browser/media/css/fonts.css">\n	</head>|g' /opt/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html \
   ## Install code-server extensions
   && cd /tmp \
-  && curl -sLO https://raw.githubusercontent.com/b-data/vsix/main/mutantdino.resourcemonitor-1.0.7.vsix \
+  && curl -sLO https://dl.b-data.ch/vsix/mutantdino.resourcemonitor-1.0.7.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension mutantdino.resourcemonitor-1.0.7.vsix \
+  && curl -sLO https://dl.b-data.ch/vsix/modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
+  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension alefragnani.project-manager \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitHub.vscode-pull-request-github \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitLab.gitlab-workflow \
-  && if [ "${MOJO_VERSION}" = "nightly" ]; then \
-    code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-nightly; \
-  else \
-    code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo@${MOJO_EXTENSION_VERSION}; \
-  fi \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-python.python \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-toolsai.jupyter \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension christian-kohler.path-intellisense \
