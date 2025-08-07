@@ -9,12 +9,12 @@ ARG CUDA_IMAGE_FLAVOR
 ARG NB_USER=jovyan
 ARG NB_UID=1000
 ARG JUPYTERHUB_VERSION=5.3.0
-ARG JUPYTERLAB_VERSION=4.4.3
+ARG JUPYTERLAB_VERSION=4.4.5
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.100.3
-ARG NEOVIM_VERSION=0.11.2
-ARG GIT_VERSION=2.50.0
-ARG GIT_LFS_VERSION=3.6.1
+ARG CODE_SERVER_VERSION=4.102.3
+ARG NEOVIM_VERSION=0.11.3
+ARG GIT_VERSION=2.50.1
+ARG GIT_LFS_VERSION=3.7.0
 ARG PANDOC_VERSION=3.6.3
 
 ARG INSTALL_MAX
@@ -58,6 +58,14 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
     mv /files/usr/local/bin/nvidia_entrypoint.sh \
       /files/usr/local/bin/start.sh; \
   fi \
+  ## Fix default PATH settings
+  && sed -i "s|/opt/modular/bin:||g" /files/etc/profile.d/00-reset-path.sh \
+  ## Fix path for the Mojo LSP server
+  && sed -i "s|/opt/modular|/usr/local|g" \
+    /files/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json \
+  ## MAX SDK: Fix path for symlink
+  && sed -i "s|/opt/modular|/usr/local|g" \
+    /files/usr/local/bin/before-notebook.d/12-mojo.sh \
   ## Ensure file modes are correct when using CI
   ## Otherwise set to 777 in the target image
   && find /files -type d -exec chmod 755 {} \; \
@@ -218,10 +226,10 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     platformdirs \
   ## Install font MesloLGS NF
   && mkdir -p /usr/share/fonts/truetype/meslo \
-  && curl -sL https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Regular.ttf" \
-  && curl -sL https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Bold.ttf" \
-  && curl -sL https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Italic.ttf" \
-  && curl -sL https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Bold Italic.ttf" \
+  && curl -sL https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Regular.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Regular.ttf" \
+  && curl -sL https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Bold.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Bold.ttf" \
+  && curl -sL https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Italic.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Italic.ttf" \
+  && curl -sL https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Bold%20Italic.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Bold Italic.ttf" \
   && fc-cache -fsv \
   ## Git: Set default branch name to main
   && git config --system init.defaultBranch main \
@@ -266,63 +274,49 @@ ARG NB_GID=100
 ARG MOJO_VERSION
 ARG INSTALL_MAX
 
-  ## Install Magic
-RUN export MODULAR_HOME="$HOME/.modular" \
-  && curl -ssL https://magic.modular.com | bash \
-  && mv ${HOME}/.modular/bin/magic /usr/local/bin \
+  ## Install Pixi
+RUN curl -fsSL https://pixi.sh/install.sh | bash \
+  && mv ${HOME}/.pixi/bin/pixi /usr/local/bin \
   ## Clean up
-  && rm -rf ${HOME}/.modular \
+  && rm -rf ${HOME}/.pixi \
   && rm -rf /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/*
 
   ## Install MAX/Mojo
 RUN cd /tmp \
-  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    if [ "${MOJO_VERSION}" = "nightly" ]; then \
-      magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
-      magic add max max-pipelines python==${PYTHON_VERSION%.*}; \
-    else \
-      magic init -c conda-forge -c https://conda.modular.com/max; \
-      magic add max==${MOJO_VERSION} max-pipelines==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
-    fi \
+  && if [ "${MOJO_VERSION}" = "nightly" ]; then \
+    pixi init -c conda-forge -c https://conda.modular.com/max-nightly; \
+    pixi add max max-pipelines python==${PYTHON_VERSION%.*}; \
   else \
-    if [ "${MOJO_VERSION}" = "nightly" ]; then \
-      magic init -c conda-forge -c https://conda.modular.com/max-nightly; \
-      magic add mojo-jupyter python==${PYTHON_VERSION%.*}; \
-    else \
-      magic init -c conda-forge -c https://conda.modular.com/max; \
-      magic add mojo-jupyter==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
-    fi \
+    pixi init -c conda-forge -c https://conda.modular.com/max; \
+    pixi add max==${MOJO_VERSION} max-pipelines==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
   fi \
-  ## Disable telemetry
-  && magic telemetry --manifest-path pixi.toml --disable \
   ## Get rid of all the unnecessary stuff
   ## and move installation to /opt/modular
   && mkdir -p /opt/modular/bin \
   && mkdir -p /opt/modular/lib \
   && mkdir -p /opt/modular/share \
-  && cd /tmp/.magic/envs \
+  && cd /tmp/.pixi/envs \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     cp -a default/bin/max* \
       /opt/modular/bin; \
     cp -a default/lib/libDevice* \
-      default/lib/libGenericMLSupport* \
+      default/lib/libmax.so \
       default/lib/libmodular* \
-      default/lib/libmof.so \
       default/lib/*MOGG* \
-      default/lib/libmonnx.so \
-      default/lib/libmtorch.so \
       default/lib/libStock* \
       default/lib/libTorch* \
       /opt/modular/lib; \
     cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
   fi \
-  && cp -a default/bin/lldb* \
+  && cp -a default/bin/lld \
+    default/bin/lldb* \
     default/bin/mblack \
     default/bin/modular* \
     default/bin/mojo* \
     /opt/modular/bin \
   && cp -a default/lib/libAsyncRT* \
+    default/lib/libGenericMLSupport* \
     default/lib/libKGENCompilerRT* \
     default/lib/liblldb* \
     default/lib/libMGPRT.so \
@@ -339,33 +333,35 @@ RUN cd /tmp \
   && cp -a default/test /opt/modular \
   && mkdir ${MODULAR_HOME}/crashdb \
   && rm ${MODULAR_HOME}/firstActivation \
+  ## Disable telemetry
+  && echo "\n[Telemetry]\nenabled = false\n\n[crash_reporting]\nenabled = false" \
+    >> ${MODULAR_HOME}/modular.cfg \
   ## Fix Modular home for Mojo
-  && sed -i "s|/tmp/.magic/envs/default|/opt/modular|g" \
+  && sed -i "s|/tmp/.pixi/envs/default|/usr/local|g" \
     ${MODULAR_HOME}/modular.cfg \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    ## Fix Python path for max-serve, max-pipelines
-    sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
+    ## Fix Python path for max, max-serve, max-pipelines
+    sed -i "s|/tmp/.pixi/envs/default|/usr/local|g" \
+      /opt/modular/bin/max \
       /opt/modular/bin/max-serve \
       /opt/modular/bin/max-pipelines; \
   fi \
   ## Fix Python path for mblack
-  && sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
+  && sed -i "s|/tmp/.pixi/envs/default|/usr/local|g" \
     /opt/modular/bin/mblack \
   ## Fix permissions
-  && chown -R root:${NB_GID} /opt/modular \
+  && chown -R root:${NB_GID} ${MODULAR_HOME} \
   && chmod -R g+w ${MODULAR_HOME}
 
 ## Install the Mojo kernel for Jupyter
 RUN mkdir -p /usr/local/share/jupyter/kernels \
-  && mv /tmp/.magic/envs/default/share/jupyter/kernels/mojo* \
+  && mv /tmp/.pixi/envs/default/share/jupyter/kernels/mojo* \
     /usr/local/share/jupyter/kernels/ \
   ## Fix Modular home in the Mojo kernel for Jupyter
-  && grep -rl /tmp/.magic/envs/default/share/jupyter /usr/local/share/jupyter/kernels/mojo* | \
-    xargs sed -i "s|/tmp/.magic/envs/default|/usr/local|g" \
-  && grep -rl /usr/local/share/max /usr/local/share/jupyter/kernels/mojo* | \
-    xargs sed -i "s|/usr/local/share/max|/opt/modular/share/max|g" \
+  && grep -rl /tmp/.pixi/envs/default/share/jupyter /usr/local/share/jupyter/kernels/mojo* | \
+    xargs sed -i "s|/tmp/.pixi/envs/default|/usr/local|g" \
   ## Change display name in the Mojo kernel for Jupyter
-  && sed -i "s|\"display_name\".*|\"display_name\": \"Mojo $MOJO_VERSION ${INSTALL_MAX:+(MAX)}\",|g" \
+  && sed -i "s|\"display_name\".*|\"display_name\": \"Mojo $MOJO_VERSION${INSTALL_MAX:+ (MAX)}\",|g" \
     /usr/local/share/jupyter/kernels/mojo*/kernel.json \
   && if [ "${MOJO_VERSION}" = "nightly" ]; then \
     cp -a /usr/local/share/jupyter/kernels/mojo*/nightly-logo-64x64.png \
@@ -400,20 +396,22 @@ RUN mkdir /opt/code-server \
   && sed -i 's|</head>|	<link rel="stylesheet" type="text/css" href="{{BASE}}/_static/src/browser/media/css/fonts.css">\n	</head>|g' /opt/code-server/lib/vscode/out/vs/code/browser/workbench/workbench.html \
   ## Install code-server extensions
   && cd /tmp \
-  && curl -sLO https://dl.b-data.ch/vsix/piotrpalarz.vscode-gitignore-generator-1.0.3.vsix \
-  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension piotrpalarz.vscode-gitignore-generator-1.0.3.vsix \
-  && curl -sLO https://dl.b-data.ch/vsix/mutantdino.resourcemonitor-1.0.7.vsix \
+  && curl -sLO https://raw.githubusercontent.com/b-data/vsix/main/mutantdino.resourcemonitor-1.0.7.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension mutantdino.resourcemonitor-1.0.7.vsix \
-  && curl -sLO https://dl.b-data.ch/vsix/modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
-  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension alefragnani.project-manager \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitHub.vscode-pull-request-github \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitLab.gitlab-workflow \
+  && if [ "${MOJO_VERSION}" = "nightly" ]; then \
+    code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-nightly; \
+  else \
+    code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo@${MOJO_EXTENSION_VERSION}; \
+  fi \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-python.python \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-toolsai.jupyter \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension christian-kohler.path-intellisense \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension eamodio.gitlens@11.7.0 \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension mhutchie.git-graph \
+  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension piotrpalarz.vscode-gitignore-generator \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension redhat.vscode-yaml \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension grapecity.gc-excelviewer \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension editorconfig.editorconfig \
@@ -463,33 +461,24 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && rm -rf /tmp/* \
     ${HOME}/.cache
 
-ENV PATH=/opt/modular/bin:$PATH
-ENV MAGIC_NO_PATH_UPDATE=1
+ENV PIXI_NO_PATH_UPDATE=1 \
+    MODULAR_HOME=/usr/local/share/max
 
 ## Install MAX/Mojo
-COPY --from=modular /opt /opt
+COPY --from=modular /opt/modular /usr/local
 ## Install the Mojo kernel for Jupyter
 COPY --from=modular /usr/local/share/jupyter /usr/local/share/jupyter
 ## Install Python packages to the site library
 COPY --from=modular /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
   /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages
 
-RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
-  && echo BIN_DIR=\"\$MODULAR_HOME/bin\" >> /tmp/magicenv \
-  && cp /tmp/magicenv /var/tmp/magicenv.bak \
-  && cp /tmp/magicenv /tmp/magicenv.mod \
-  && chown ${NB_UID}:${NB_GID} /tmp/magicenv /tmp/magicenv.mod \
-  ## Create the user's modular bin dir
-  && . /tmp/magicenv \
-  && mkdir -p ${BIN_DIR} \
-  ## Append the user's modular bin dir to PATH
-  && sed -i 's/\$HOME/\\$HOME/g' /tmp/magicenv.mod \
-  && . /tmp/magicenv.mod \
-  && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc \
+  ## Create the user's pixi bin dir
+RUN mkdir -p ${HOME}/.pixi/bin \
+  ## Append the user's pixi bin dir to PATH
+  && echo "\n# Append the user's pixi bin dir to PATH\nif [[ \"\$PATH\" != *\"\$HOME/.pixi/bin\"* ]] ; then\n    PATH=\"\$PATH:\$HOME/.pixi/bin\"\nfi" | tee -a ${HOME}/.bashrc \
     /etc/skel/.bashrc \
-  ## Create the user's modular bin dir in the skeleton directory
-  && HOME=/etc/skel . /tmp/magicenv \
-  && mkdir -p ${BIN_DIR} \
+  ## Create the user's pixi bin dir in the skeleton directory
+  && mkdir -p /etc/skel/.pixi/bin \
   ## MAX/Mojo: Install Python dependencies
   && apt-get update \
   && apt-get -y install --no-install-recommends cmake \
@@ -499,7 +488,7 @@ RUN echo MODULAR_HOME=\"\$HOME/.modular\" > /tmp/magicenv \
       ## MAX: Install CPU-only version of PyTorch in regular images
       export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cpu"; \
     else \
-      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu126"; \
+      export PIP_EXTRA_INDEX_URL="https://download.pytorch.org/whl/cu128"; \
     fi; \
     packages=$(grep "Requires-Dist:" \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
@@ -533,15 +522,10 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
   && ${HOME}/.oh-my-zsh/custom/themes/powerlevel10k/gitstatus/install -f \
   && sed -i 's/ZSH="\/home\/jovyan\/.oh-my-zsh"/ZSH="$HOME\/.oh-my-zsh"/g' ${HOME}/.zshrc \
   && sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="powerlevel10k\/powerlevel10k"/g' ${HOME}/.zshrc \
-  ## Create the user's modular bin dir
-  && . /tmp/magicenv \
-  && mkdir -p ${BIN_DIR} \
-  ## Append the user's modular bin dir to PATH
-  && . /tmp/magicenv.mod \
-  && echo "\n# Append the user's modular bin dir to PATH\nif [[ \"\$PATH\" != *\"${BIN_DIR}\"* ]] ; then\n    PATH=\"\$PATH:${BIN_DIR}\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
-  ## Clean up
-  && rm -rf /tmp/magicenv \
-    /tmp/magicenv.mod \
+  ## Create the user's pixi bin dir
+  && mkdir -p ${HOME}/.pixi/bin \
+  ## Append the user's pixi bin dir to PATH
+  && echo "\n# Append the user's pixi bin dir to PATH\nif [[ \"\$PATH\" != *\"\$HOME/.pixi/bin\"* ]] ; then\n    PATH=\"\$PATH:\$HOME/.pixi/bin\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   ## Customise the bash/zsh run commands
   && echo "\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/bin\" ] && [[ \"\$PATH\" != *\"\$HOME/bin\"* ]] ; then\n    PATH=\"\$HOME/bin:\$PATH\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \
   && echo "\n# set PATH so it includes user's private bin if it exists\nif [ -d \"\$HOME/.local/bin\" ] && [[ \"\$PATH\" != *\"\$HOME/.local/bin\"* ]] ; then\n    PATH=\"\$HOME/.local/bin:\$PATH\"\nfi" | tee -a ${HOME}/.bashrc ${HOME}/.zshrc \

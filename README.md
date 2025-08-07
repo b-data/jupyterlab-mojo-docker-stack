@@ -139,7 +139,7 @@ latest:
 ```shell
 cd base
 docker build \
-  --build-arg MOJO_VERSION=25.3.0 \
+  --build-arg MOJO_VERSION=25.4.0 \
   --build-arg PYTHON_VERSION=3.12.11 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
@@ -246,6 +246,18 @@ docker run -it --rm \
 ```
 
 *might* be sufficient.
+
+### code-server settings
+
+Some extension features enabled *by default* are intentionally disabled, i.e.
+[set to `false`](NOTES.md#default).
+
+To enable one of these features, explicitly set it to `true` under
+'Command Palette...' > 'Preferences: Open User Settings (JSON)'.
+
+Enabling these via the GUI is not sufficient. Such default settings are
+overwritten upon restart by the
+[Juypter startup hook](NOTES.md#jupyter-startup-hooks) `30-code-server.sh`.
 
 ## Misc
 
