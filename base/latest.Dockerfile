@@ -224,6 +224,8 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     packaging \
     pathspec \
     platformdirs \
+    tomli \
+    typing-extensions \
   ## Install font MesloLGS NF
   && mkdir -p /usr/share/fonts/truetype/meslo \
   && curl -sL https://raw.githubusercontent.com/romkatv/powerlevel10k-media/master/MesloLGS%20NF%20Regular.ttf -o "/usr/share/fonts/truetype/meslo/MesloLGS NF Regular.ttf" \
