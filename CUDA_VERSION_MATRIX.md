@@ -6,7 +6,7 @@ Topmost entry = Tag `latest`
 
 | MAX    | Python  | CUDA   | Linux distro |
 |:-------|:--------|:-------|:-------------|
-| 25.5.0 | 3.12.11 | 12.9.0 | Ubuntu 24.04 |
+| 25.5.0 | 3.12.11 | 13.0.0 | Ubuntu 24.04 |
 | 25.4.0 | 3.12.11 | 12.9.0 | Ubuntu 22.04 |
 | 25.3.0 | 3.12.11 | 12.9.0 | Ubuntu 22.04 |
 | 25.2.0 | 3.12.10 | 12.8.1 | Ubuntu 22.04 |
@@ -17,6 +17,7 @@ Topmost entry = Tag `latest`
 
 | Python | CUDA | PyTorch[^1]   |
 |:-------|:-----|:--------------|
+| 3.12   | 13.0 | version ≥ 2.4 |
 | 3.12   | 12.9 | version ≥ 2.4 |
 | 3.12   | 12.8 | version ≥ 2.4 |
 
@@ -26,6 +27,7 @@ Topmost entry = Tag `latest`
 
 | CUDA   | Linux driver version | Windows driver version[^2] |
 |:-------|:---------------------|:---------------------------|
+| 13.0.0 | ≥ 580.65.06          | n/a                        |
 | 12.9.0 | ≥ 575.51.03          | ≥ 576.02                   |
 | 12.8.1 | ≥ 570.124.06         | ≥ 572.61                   |
 | 12.8.0 | ≥ 570.117            | ≥ 572.30                   |
@@ -41,10 +43,12 @@ Only works with
 
 | CUDA   | Driver version 535[^3] | Driver version 470[^4] |
 |:-------|:----------------------:|:----------------------:|
+| 13.0.0 | 🔵                      | 🔴                      |
 | 12.9.0 | 🟢                      | 🔵                      |
 | 12.8.1 | 🟢                      | 🔵                      |
 | 12.8.0 | 🟢                      | 🔵                      |
 
+🔴: Not supported
 🔵: Supported with the CUDA forward compat package only  
 🟢: Supported due to minor-version compatibility[^5]  
 🟡: Supported due to backward compatibility
