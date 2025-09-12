@@ -6,7 +6,7 @@ Topmost entry = Tag `latest`
 
 | MAX    | Python  | CUDA   | Linux distro |
 |:-------|:--------|:-------|:-------------|
-| 25.5.0 | 3.13.7  | 13.0.0 | Ubuntu 24.04 |
+| 25.5.0 | 3.13.7  | 13.0.1 | Ubuntu 24.04 |
 | 25.4.0 | 3.12.11 | 12.9.0 | Ubuntu 22.04 |
 | 25.3.0 | 3.12.11 | 12.9.0 | Ubuntu 22.04 |
 | 25.2.0 | 3.12.10 | 12.8.1 | Ubuntu 22.04 |
@@ -27,7 +27,7 @@ Topmost entry = Tag `latest`
 
 | CUDA   | Linux driver version | Windows driver version[^2] |
 |:-------|:---------------------|:---------------------------|
-| 13.0.0 | ≥ 580.65.06          | n/a                        |
+| 13.0.1 | ≥ 580.82.07          | n/a                        |
 | 12.9.0 | ≥ 575.51.03          | ≥ 576.02                   |
 | 12.8.1 | ≥ 570.124.06         | ≥ 572.61                   |
 | 12.8.0 | ≥ 570.117            | ≥ 572.30                   |
@@ -41,18 +41,18 @@ Only works with
 [NVIDIA Data Center GPUs](https://resources.nvidia.com/l/en-us-gpu) or
 [select NGC-Ready NVIDIA RTX boards](https://docs.nvidia.com/certification-programs/ngc-ready-systems/index.html).
 
-| CUDA   | Driver version 535[^3] | Driver version 470[^4] |
-|:-------|:----------------------:|:----------------------:|
-| 13.0.0 | 🔵                      | 🔴                      |
-| 12.9.0 | 🟢                      | 🔵                      |
-| 12.8.1 | 🟢                      | 🔵                      |
-| 12.8.0 | 🟢                      | 🔵                      |
+| CUDA   | Driver version 580[^3] | Driver version 535[^4] | Driver version 470[^5] |
+|:-------|:----------------------:|:----------------------:|:----------------------:|
+| 13.0.1 | 🟢                      | 🔵                      | 🔴                      |
+| 12.9.0 | 🟡                      | 🟢                      | 🔵                      |
+| 12.8.1 | 🟡                      | 🟢                      | 🔵                      |
+| 12.8.0 | 🟡                      | 🟢                      | 🔵                      |
 
-🔴: Not supported
+🔴: Not supported  
 🔵: Supported with the CUDA forward compat package only  
-🟢: Supported due to minor-version compatibility[^5]  
+🟢: Supported due to minor-version compatibility  
 🟡: Supported due to backward compatibility
 
-[^3]: EOL: June 2026  
-[^4]: EOL: July 2024
-[^5]: or the CUDA forward compat package
+[^3]: EOL: August 2028  
+[^4]: EOL: June 2026  
+[^5]: EOL: July 2024
