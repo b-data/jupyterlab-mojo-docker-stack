@@ -48,9 +48,11 @@ fi
 if [ "$(id -u)" == 0 ] ; then
   run_user_group mkdir -p "$extDataDir/magic-data-home/envs"
   run_user_group ln -snf /opt/modular "$extDataDir/magic-data-home/envs/max"
+  run_user_group ln -snf /opt/modular "$extDataDir/magic-data-home/envs/mojo"
   run_user_group mkdir -p "$extDataDir/versionDone/$sdkVersion"
 else
   mkdir -p "$extDataDir/magic-data-home/envs"
   ln -snf /opt/modular "$extDataDir/magic-data-home/envs/max"
+  ln -snf /opt/modular "$extDataDir/magic-data-home/envs/mojo"
   mkdir -p "$extDataDir/versionDone/$sdkVersion"
 fi

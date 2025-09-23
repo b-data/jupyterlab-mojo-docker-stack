@@ -64,10 +64,10 @@ platform:
 cd base
 docker build \
   --build-arg BASE_IMAGE=ubuntu \
-  --build-arg BASE_IMAGE_TAG=22.04 \
+  --build-arg BASE_IMAGE_TAG=24.04 \
   --build-arg BUILD_ON_IMAGE=glcr.b-data.ch/cuda/python/ver \
-  --build-arg MOJO_VERSION=25.4.0 \
-  --build-arg PYTHON_VERSION=3.12.11 \
+  --build-arg MOJO_VERSION=25.5.0 \
+  --build-arg PYTHON_VERSION=3.13.7 \
   --build-arg CUDA_IMAGE_FLAVOR=base \
   --build-arg INSTALL_MAX=1 \
   -t jupyterlab/cuda/max/base \
@@ -80,7 +80,7 @@ docker build \
 cd base
 docker build \
   --build-arg BASE_IMAGE=ubuntu \
-  --build-arg BASE_IMAGE_TAG=22.04 \
+  --build-arg BASE_IMAGE_TAG=24.04 \
   --build-arg BUILD_ON_IMAGE=glcr.b-data.ch/cuda/python/ver \
   --build-arg CUDA_IMAGE_FLAVOR=base \
   --build-arg INSTALL_MAX=1 \
@@ -189,7 +189,7 @@ docker run -it --rm \
 
 **What makes this project different:**
 
-1. Derived from [`nvidia/cuda:-base-ubuntu22.04`](https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=-base-ubuntu22.04)
+1. Derived from [`nvidia/cuda:base-ubuntu24.04`](https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=base-ubuntu24.04)
 1. IDE: [code-server](https://github.com/coder/code-server) next to
    [JupyterLab](https://github.com/jupyterlab/jupyterlab)
 1. Just Python – no [Conda](https://github.com/conda/conda) /
