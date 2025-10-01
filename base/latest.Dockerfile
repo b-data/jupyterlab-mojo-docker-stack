@@ -2,7 +2,6 @@ ARG BASE_IMAGE=debian
 ARG BASE_IMAGE_TAG=13
 ARG BUILD_ON_IMAGE=glcr.b-data.ch/python/ver
 ARG MOJO_VERSION
-ARG MOJO_EXTENSION_VERSION=${MOJO_VERSION}
 ARG PYTHON_VERSION
 ARG CUDA_IMAGE_FLAVOR
 
@@ -385,7 +384,6 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
 
 FROM base
 
-ARG MOJO_EXTENSION_VERSION
 ARG INSTALL_MAX
 
 ENV PATH=/opt/code-server/bin:$PATH \
@@ -411,11 +409,10 @@ RUN mkdir /opt/code-server \
   && cd /tmp \
   && curl -sLO https://dl.b-data.ch/vsix/mutantdino.resourcemonitor-1.0.7.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension mutantdino.resourcemonitor-1.0.7.vsix \
-  && curl -sLO https://dl.b-data.ch/vsix/modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
-  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension alefragnani.project-manager \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitHub.vscode-pull-request-github \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitLab.gitlab-workflow \
+  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-python.python \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-toolsai.jupyter \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension christian-kohler.path-intellisense \
