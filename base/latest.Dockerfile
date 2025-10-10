@@ -340,7 +340,7 @@ RUN cd /tmp \
   && cp -a default/share/max /opt/modular/share \
   && cp -a default/test /opt/modular \
   && mkdir ${MODULAR_HOME}/crashdb \
-  && rm ${MODULAR_HOME}/firstActivation \
+  && rm -rf ${MODULAR_HOME}/firstActivation \
   ## Disable telemetry
   && echo "\n[Telemetry]\nenabled = false\n\n[crash_reporting]\nenabled = false" \
     >> ${MODULAR_HOME}/modular.cfg \
