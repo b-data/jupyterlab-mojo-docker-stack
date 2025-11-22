@@ -1,10 +1,8 @@
-.env:
-  variables:
-    MOJO_VERSION: "25.5.0"
-    MOJO_EXTENSION_VERSION: "25.5.0"
-    PYTHON_VERSION: "3.13.7"
-    TAG_VERSION_MAJ_MIN: "true"
-    TAG_VERSION_MAJ: "false"
+variables:
+  MOJO_VERSION: "25.6.0"
+  PYTHON_VERSION: "3.13.9"
+  TAG_VERSION_MAJ_MIN: "false"
+  TAG_VERSION_MAJ: "false"
 
 workflow:
   rules:
@@ -39,7 +37,6 @@ workflow:
 
 .build:
   image: glcr.b-data.ch/docker/docker:dind
-  extends: .env
   services:
     - name: glcr.b-data.ch/docker/docker:dind
       alias: docker
@@ -54,7 +51,6 @@ workflow:
 .post:
   image: glcr.b-data.ch/docker/docker:dind
   stage: .post
-  extends: .env
 
 stages:
   - .pre

@@ -1,7 +1,7 @@
 ARG BUILD_ON_IMAGE=glcr.b-data.ch/jupyterlab/mojo/base
 ARG MOJO_VERSION
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG QUARTO_VERSION=1.8.24
+ARG QUARTO_VERSION=1.8.26
 ARG CTAN_REPO=https://mirror.ctan.org/systems/texlive/tlnet
 
 FROM ${BUILD_ON_IMAGE}${MOJO_VERSION:+:}${MOJO_VERSION}
@@ -123,11 +123,6 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     tables \
     widgetsnbextension \
     xlrd \
-  ## Install facets
-  && cd /tmp \
-  && git clone https://github.com/PAIR-code/facets.git \
-  && jupyter nbclassic-extension install facets/facets-dist/ --sys-prefix \
-  && cd / \
   ## Install code-server extensions
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension quarto.quarto \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension James-Yu.latex-workshop \

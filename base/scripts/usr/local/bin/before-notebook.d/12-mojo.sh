@@ -29,18 +29,29 @@ fi
 if [ "$(id -u)" == 0 ] ; then
   if [ "${MOJO_VERSION}" = "nightly" ]; then
     extDataDir=/home/$NB_USER${DOMAIN:+@$DOMAIN}/.local/share/code-server/User/globalStorage/modular-mojotools.vscode-mojo-nightly
-    sdkVersion=$(jq -r '.sdkVersion' /opt/code-server/lib/vscode/extensions/modular-mojotools.vscode-mojo*/package.json)
   else
     extDataDir=/home/$NB_USER${DOMAIN:+@$DOMAIN}/.local/share/code-server/User/globalStorage/modular-mojotools.vscode-mojo
-    sdkVersion=$MOJO_VERSION
   fi
 else
   if [ "${MOJO_VERSION}" = "nightly" ]; then
     extDataDir=$HOME/.local/share/code-server/User/globalStorage/modular-mojotools.vscode-mojo-nightly
-    sdkVersion=$(jq -r '.sdkVersion' /opt/code-server/lib/vscode/extensions/modular-mojotools.vscode-mojo*/package.json)
   else
     extDataDir=$HOME/.local/share/code-server/User/globalStorage/modular-mojotools.vscode-mojo
-    sdkVersion=$MOJO_VERSION
+  fi
+fi
+
+sdkVersion=$(jq -r '.sdkVersion' /opt/code-server/lib/vscode/extensions/modular-mojotools.vscode-mojo*/package.json)
+
+# MAX SDK: Forward compatibility
+if [ "$sdkVersion" = "null" ]; then
+  sdkVersion=$(jq -r '.version' /opt/code-server/lib/vscode/extensions/modular-mojotools.vscode-mojo*/package.json)
+fi
+
+if dpkg --compare-versions "$sdkVersion" ge "26.0.0"; then
+  if [ "$(id -u)" == 0 ] ; then
+    extDataDir=/home/$NB_USER${DOMAIN:+@$DOMAIN}/.local/share/code-server/User/globalStorage/modular-mojotools.vscode-mojo
+  else
+    extDataDir=$HOME/.local/share/code-server/User/globalStorage/modular-mojotools.vscode-mojo
   fi
 fi
 

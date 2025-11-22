@@ -124,6 +124,7 @@ are installed.
     [jupyter-lsp/jupyterlab-lsp > Installation > Configuring the servers](https://github.com/jupyter-lsp/jupyterlab-lsp#configuring-the-servers)
   * [Mojo LSP Server](base/conf/jupyterlab/usr/local/etc/jupyter/jupyter_server_config.d/mojo-lsp-server.json)
 * [code-server](base/conf/user/var/backups/skel/.local/share/code-server/User/settings.json)
+  * Features > Chat > Disable AI Features: true
   * Text Editor > Tab Size: 2
   * Extensions > GitLab Workflow
     * GitLab Duo Pro > Duo Code Suggestions: false

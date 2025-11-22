@@ -2,19 +2,18 @@ ARG BASE_IMAGE=debian
 ARG BASE_IMAGE_TAG=13
 ARG BUILD_ON_IMAGE=glcr.b-data.ch/python/ver
 ARG MOJO_VERSION
-ARG MOJO_EXTENSION_VERSION=${MOJO_VERSION}
 ARG PYTHON_VERSION
 ARG CUDA_IMAGE_FLAVOR
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
-ARG JUPYTERHUB_VERSION=5.3.0
-ARG JUPYTERLAB_VERSION=4.4.5
+ARG JUPYTERHUB_VERSION=5.4.2
+ARG JUPYTERLAB_VERSION=4.4.10
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.104.1
-ARG NEOVIM_VERSION=0.11.4
-ARG GIT_VERSION=2.51.0
-ARG GIT_LFS_VERSION=3.7.0
+ARG CODE_SERVER_VERSION=4.106.2
+ARG NEOVIM_VERSION=0.11.5
+ARG GIT_VERSION=2.52.0
+ARG GIT_LFS_VERSION=3.7.1
 ARG PANDOC_VERSION=3.6.3
 
 ARG INSTALL_MAX
@@ -253,7 +252,7 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
     sed -i 's/.*pam_limits.so/#&/g' /etc/pam.d/sudo-i; \
   fi \
   ## Add user
-  && useradd -l -m -s $(which zsh) -N -u ${NB_UID} ${NB_USER} \
+  && useradd -K HOME_MODE=0755 -l -m -s $(which zsh) -N -u ${NB_UID} ${NB_USER} \
   ## Mark home directory as populated
   && touch /home/${NB_USER}/.populated \
   && chown ${NB_UID}:${NB_GID} /home/${NB_USER}/.populated \
@@ -261,6 +260,8 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
   ## Create backup directory for home directory
   && mkdir -p /var/backups/skel \
   && chown ${NB_UID}:${NB_GID} /var/backups/skel \
+  ## Allow writing to /etc/passwd for the root group
+  && chmod g+w /etc/passwd \
   ## Install Tini
   && curl -sL https://github.com/krallin/tini/releases/download/v0.19.0/tini-${dpkgArch} -o /usr/local/bin/tini \
   && chmod +x /usr/local/bin/tini \
@@ -269,12 +270,17 @@ RUN dpkgArch="$(dpkg --print-architecture)" \
   && rm -rf /var/lib/apt/lists/* \
     ${HOME}/.cache
 
+FROM quay.io/konflux-ci/yq:latest AS yq
+
 FROM base AS modular
 
 ARG NB_GID=100
 
 ARG MOJO_VERSION
 ARG INSTALL_MAX
+
+## Install yq
+COPY --from=yq /usr/bin/yq /usr/bin/yq
 
   ## Install Pixi
 RUN curl -fsSL https://pixi.sh/install.sh | bash \
@@ -292,6 +298,9 @@ RUN cd /tmp \
     pixi init -c conda-forge -c https://conda.modular.com/max; \
     pixi add modular==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
   fi \
+  && yq -r \
+    '.packages | map(select(.license == "LicenseRef-Modular-Proprietary")) | .[].constrains[]?' \
+    pixi.lock > requirements.txt \
   ## Get rid of all the unnecessary stuff
   ## and move installation to /opt/modular
   && mkdir -p /opt/modular/bin \
@@ -320,16 +329,18 @@ RUN cd /tmp \
     default/lib/libMGPRT.so \
     default/lib/libMojo* \
     default/lib/libMSupport* \
+    default/lib/libNVPTX.so \
     default/lib/lldb* \
     default/lib/mojo* \
     /opt/modular/lib \
   && cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/*mblack* \
     default/lib/python${PYTHON_VERSION%.*}/site-packages/mblib* \
+    default/lib/python${PYTHON_VERSION%.*}/site-packages/mojo* \
     /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages \
   && cp -a default/share/max /opt/modular/share \
   && cp -a default/test /opt/modular \
   && mkdir ${MODULAR_HOME}/crashdb \
-  && rm ${MODULAR_HOME}/firstActivation \
+  && rm -rf ${MODULAR_HOME}/firstActivation \
   ## Disable telemetry
   && echo "\n[Telemetry]\nenabled = false\n\n[crash_reporting]\nenabled = false" \
     >> ${MODULAR_HOME}/modular.cfg \
@@ -373,7 +384,6 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
 
 FROM base
 
-ARG MOJO_EXTENSION_VERSION
 ARG INSTALL_MAX
 
 ENV PATH=/opt/code-server/bin:$PATH \
@@ -399,11 +409,10 @@ RUN mkdir /opt/code-server \
   && cd /tmp \
   && curl -sLO https://dl.b-data.ch/vsix/mutantdino.resourcemonitor-1.0.7.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension mutantdino.resourcemonitor-1.0.7.vsix \
-  && curl -sLO https://dl.b-data.ch/vsix/modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
-  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo-${MOJO_EXTENSION_VERSION}.vsix \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension alefragnani.project-manager \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitHub.vscode-pull-request-github \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension GitLab.gitlab-workflow \
+  && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension modular-mojotools.vscode-mojo \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-python.python \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension ms-toolsai.jupyter \
   && code-server --extensions-dir ${CODE_BUILTIN_EXTENSIONS_DIR} --install-extension christian-kohler.path-intellisense \
@@ -462,6 +471,8 @@ RUN export PIP_BREAK_SYSTEM_PACKAGES=1 \
 ENV PIXI_NO_PATH_UPDATE=1 \
     MODULAR_HOME=/usr/local/share/max
 
+## Copy requirements file
+COPY --from=modular /tmp/requirements.txt /tmp/requirements.txt
 ## Install MAX/Mojo
 COPY --from=modular /opt/modular /usr/local
 ## Install the Mojo kernel for Jupyter
@@ -482,21 +493,16 @@ RUN mkdir -p ${HOME}/.pixi/bin \
   && apt-get -y install --no-install-recommends cmake \
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
-    packages=$(grep "Requires-Dist:" \
-      /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages/max*.dist-info/METADATA | \
-      sed "s|Requires-Dist: \(.*\)|\1|" | \
-      cut -d ";" -f 1 | \
-      sed "s|xgrammar==|xgrammar>=|g" | \
-      tr -d "[:blank:]"); \
-    pip install $packages; \
+    pip install -r /tmp/requirements.txt; \
   else \
     pip install numpy; \
   fi \
   ## Clean up
   && apt-get -y purge cmake \
   && apt-get -y autoremove \
-  && rm -rf ${HOME}/.cache \
-    /var/lib/apt/lists/*
+  && rm -rf /tmp/* \
+  && rm -rf /var/lib/apt/lists/* \
+    ${HOME}/.cache
 
 ## Switch back to ${NB_USER} to avoid accidental container runs as root
 USER ${NB_USER}

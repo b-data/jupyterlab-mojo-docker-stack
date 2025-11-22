@@ -139,8 +139,8 @@ latest:
 ```shell
 cd base
 docker build \
-  --build-arg MOJO_VERSION=25.5.0 \
-  --build-arg PYTHON_VERSION=3.13.7 \
+  --build-arg MOJO_VERSION=25.6.0 \
+  --build-arg PYTHON_VERSION=3.13.9 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
