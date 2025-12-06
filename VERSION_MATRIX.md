@@ -37,3 +37,10 @@ Topmost entry = Tag `latest`
 | 24.5.0   | 2024-12-17 | 1.6.39  |
 | 24.4.0   | 2024-09-13 | 1.5.57  |
 | 24.3.0   | 2024-06-07 | 1.4.555 |
+
+### Bugs
+
+* Versions 25.{6,7}.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
+  not installed or not working
+  * Cross reference: <https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1708>
+    * Cross reference: <https://github.com/microsoft/vscode/issues/276673>
