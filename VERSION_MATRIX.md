@@ -24,7 +24,7 @@ Topmost entry = Tag `latest`
 
 ### Bugs
 
-* Versions 25.{6,7}.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
+* Versions 25.6.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
   not installed or not working
   * Cross reference: <https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1708>
     * Cross reference: <https://github.com/microsoft/vscode/issues/276673>
