@@ -25,7 +25,7 @@ Topmost entry = Tag `latest`
 
 [^1]: Ships with its own CUDA dependencies
 
-## Recommended NVIDIA driver (PB)
+## Recommended NVIDIA driver (NFB/PB)
 
 | CUDA   | Linux driver version | Windows driver version[^2] |
 |:-------|:---------------------|:---------------------------|
