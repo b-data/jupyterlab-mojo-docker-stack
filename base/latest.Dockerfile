@@ -311,7 +311,6 @@ RUN cd /tmp \
     cp -a default/bin/max* \
       /opt/modular/bin; \
     cp -a default/lib/libmax.so \
-      default/lib/*MOGG* \
       /opt/modular/lib; \
     cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
