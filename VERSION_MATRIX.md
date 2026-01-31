@@ -8,6 +8,7 @@ Topmost entry = Tag `latest`
 
 | MAX/Mojo   | Python     | Jupyter Hub | Jupyter Lab | code‑server (Code) | Neovim | Git    | Git LFS | Pandoc | Linux distro |
 |:-----------|:-----------|:------------|:------------|:-------------------|:-------|:-------|:--------|:-------|:-------------|
+| 25.7.0     | 3.13.11    | 5.4.3       | 4.5.3       | 4.108.2 (1.108.2)  | 0.11.6 | 2.52.0 | 3.7.1   | 3.6.3  | Debian 13    |
 | 25.6.0     | 3.13.9     | 5.4.2       | 4.4.10      | 4.106.2 (1.106.2)  | 0.11.5 | 2.52.0 | 3.7.1   | 3.6.3  | Debian 13    |
 | 25.5.0     | 3.13.7     | 5.3.0       | 4.4.5       | 4.104.1 (1.104.1)  | 0.11.4 | 2.51.0 | 3.7.0   | 3.6.3  | Debian 13    |
 | 25.4.0     | 3.12.11    | 5.3.0       | 4.4.5       | 4.102.3 (1.102.3)  | 0.11.3 | 2.50.1 | 3.7.0   | 3.6.3  | Debian 12    |
@@ -21,10 +22,18 @@ Topmost entry = Tag `latest`
 
 [^1]: MAX images n/a
 
+### Bugs
+
+* Versions 25.6.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
+  not installed or not working
+  * Cross reference: <https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1708>
+    * Cross reference: <https://github.com/microsoft/vscode/issues/276673>
+
 ## scipy images
 
 | MAX/Mojo | CTAN date  | Quarto  |
 |:---------|:-----------|:--------|
+| 25.7.0   |            | 1.8.27  |
 | 25.6.0   | 2025-11-20 | 1.8.26  |
 | 25.5.0   | 2025-09-22 | 1.8.24  |
 | 25.4.0   | 2025-08-05 | 1.7.32  |

@@ -1,7 +1,7 @@
 variables:
-  MOJO_VERSION: "25.6.0"
-  PYTHON_VERSION: "3.13.9"
-  TAG_VERSION_MAJ_MIN: "true"
+  MOJO_VERSION: "25.7.0"
+  PYTHON_VERSION: "3.13.11"
+  TAG_VERSION_MAJ_MIN: "false"
   TAG_VERSION_MAJ: "false"
 
 workflow:

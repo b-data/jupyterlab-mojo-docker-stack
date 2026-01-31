@@ -1,7 +1,7 @@
 # JupyterLab MAX/Mojo docker stack
 
 <!-- markdownlint-disable line-length -->
-[![minimal-readme compliant](https://img.shields.io/badge/readme%20style-minimal-brightgreen.svg)](https://github.com/RichardLitt/standard-readme/blob/master/example-readmes/minimal-readme.md) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) <a href="https://liberapay.com/benz0li/donate"><img src="https://liberapay.com/assets/widgets/donate.svg" alt="Donate using Liberapay" height="20"></a>
+[![minimal-readme compliant](https://img.shields.io/badge/readme%20style-minimal-brightgreen.svg)](https://github.com/RichardLitt/standard-readme/blob/master/example-readmes/minimal-readme.md) [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 <!-- markdownlint-enable line-length -->
 
 | See the [CUDA-based JupyterLab MAX docker stack](CUDA.md) for GPU accelerated docker images. |
@@ -139,8 +139,8 @@ latest:
 ```shell
 cd base
 docker build \
-  --build-arg MOJO_VERSION=25.6.0 \
-  --build-arg PYTHON_VERSION=3.13.9 \
+  --build-arg MOJO_VERSION=25.7.0 \
+  --build-arg PYTHON_VERSION=3.13.11 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
