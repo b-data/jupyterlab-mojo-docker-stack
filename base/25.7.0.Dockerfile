@@ -494,6 +494,7 @@ RUN mkdir -p ${HOME}/.pixi/bin \
   && export PIP_BREAK_SYSTEM_PACKAGES=1 \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     pip install -r /tmp/requirements.txt; \
+    pip install 'transformers<5'; \
   else \
     pip install numpy; \
   fi \
