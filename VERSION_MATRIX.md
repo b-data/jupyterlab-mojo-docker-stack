@@ -25,7 +25,10 @@ Topmost entry = Tag `latest`
 
 ### Bugs
 
-* Versions 25.6.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
+* Version 26.1.0: \[BUG\]\[MAX\]: model compiles/graph is built, then max hangs
+  before silently exiting
+  * Cross reference: <https://github.com/modular/modular/issues/5858>
+* Version 25.6.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
   not installed or not working
   * Cross reference: <https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1708>
     * Cross reference: <https://github.com/microsoft/vscode/issues/276673>
