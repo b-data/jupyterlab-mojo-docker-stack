@@ -67,7 +67,7 @@ docker build \
   --build-arg BASE_IMAGE_TAG=24.04 \
   --build-arg BUILD_ON_IMAGE=glcr.b-data.ch/cuda/python/ver \
   --build-arg MOJO_VERSION=26.2.0 \
-  --build-arg PYTHON_VERSION=3.13.11 \
+  --build-arg PYTHON_VERSION=3.14.4 \
   --build-arg CUDA_IMAGE_FLAVOR=base \
   --build-arg INSTALL_MAX=1 \
   -t jupyterlab/cuda/max/base \
