@@ -30,6 +30,8 @@ Topmost entry = Tag `latest`
 * Version 26.1.0: \[BUG\]\[MAX\]: model compiles/graph is built, then max hangs
   before silently exiting
   * Cross reference: <https://github.com/modular/modular/issues/5858>
+    :information_source: Versions ≥ 26.2.0 exit with an error message
+* Version 26.1.0: VS Code Python extension: Python environment tools are missing
 * Version 25.6.0: \[vscode-shellcheck/vscode-shellcheck\] ShellCheck is
   not installed or not working
   * Cross reference: <https://github.com/vscode-shellcheck/vscode-shellcheck/issues/1708>
