@@ -75,6 +75,7 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
 FROM glcr.b-data.ch/neovim/nvsi:${NEOVIM_VERSION} AS nvsi
 FROM glcr.b-data.ch/git/gsi/${GIT_VERSION}/${BASE_IMAGE}:${BASE_IMAGE_TAG} AS gsi
 FROM glcr.b-data.ch/git-lfs/glfsi:${GIT_LFS_VERSION} AS glfsi
+FROM glcr.b-data.ch/vscode-extensions/ms-python.python:latest-python-env-tools AS pet
 
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-cuda-max
 
@@ -373,7 +374,7 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
       /usr/local/share/jupyter/kernels/mojo*/logo.svg; \
   fi
 
-FROM base
+FROM base AS jupyterlab-mojo-base
 
 ARG INSTALL_MAX
 
@@ -529,9 +530,23 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
   ## Create backup of home directory
   && cp -a ${HOME}/. /var/backups/skel
 
+FROM files AS files-pet
+
+COPY --from=jupyterlab-mojo-base /opt/code-server/lib/vscode/extensions /tmp/extensions
+COPY --from=pet /python-env-tools /tmp/python-env-tools
+
+## Add missing Python environment tools to Python extension
+RUN extensionBasename="$(basename /tmp/extensions/ms-python.python-*)" \
+  && mkdir -p "/files/opt/code-server/lib/vscode/extensions/$extensionBasename" \
+  && cp -r /tmp/python-env-tools \
+    /files/opt/code-server/lib/vscode/extensions/ms-python.python-*-universal \
+  && rm -rf /tmp/*
+
+FROM jupyterlab-mojo-base
+
 ## Copy files as late as possible to avoid cache busting
-COPY --from=files /files /
-COPY --from=files /files/var/backups/skel ${HOME}
+COPY --from=files-pet /files /
+COPY --from=files-pet /files/var/backups/skel ${HOME}
 
 ARG JUPYTER_PORT=8888
 ENV JUPYTER_PORT=${JUPYTER_PORT}
