@@ -1,7 +1,7 @@
 variables:
   MAX_VERSION: "26.3.0"
   MOJO_VERSION: "1.0.0b1"
-  PYTHON_VERSION: "3.14.5"
+  PYTHON_VERSION: "3.14.6"
   TAG_VERSION_MAJ_MIN: "false"
   TAG_VERSION_MAJ: "false"
 
