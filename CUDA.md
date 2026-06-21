@@ -109,6 +109,7 @@ self built:
 
 ```shell
 docker run -it --rm \
+  --cap-add SYS_NICE \
   --gpus '"device=all"' \
   -p 8888:8888 \
   -u root \
@@ -122,6 +123,7 @@ from the project's GitLab Container Registries:
 
 ```shell
 docker run -it --rm \
+  --cap-add SYS_NICE \
   --gpus '"device=all"' \
   -p 8888:8888 \
   -u root \

@@ -180,6 +180,7 @@ self built:
 
 ```shell
 docker run -it --rm \
+  --cap-add SYS_NICE \
   -p 8888:8888 \
   -u root \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
@@ -192,6 +193,7 @@ from the project's GitLab Container Registries:
 
 ```shell
 docker run -it --rm \
+  --cap-add SYS_NICE \
   -p 8888:8888 \
   -u root \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
