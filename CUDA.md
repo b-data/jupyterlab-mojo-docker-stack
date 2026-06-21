@@ -66,7 +66,7 @@ docker build \
   --build-arg BASE_IMAGE=ubuntu \
   --build-arg BASE_IMAGE_TAG=24.04 \
   --build-arg BUILD_ON_IMAGE=glcr.b-data.ch/cuda/python/ver \
-  --build-arg MAX_VERSION=26.3.0 \
+  --build-arg MAX_VERSION=26.4.0 \
   --build-arg PYTHON_VERSION=3.14.6 \
   --build-arg CUDA_IMAGE_FLAVOR=base \
   --build-arg INSTALL_MAX=1 \
