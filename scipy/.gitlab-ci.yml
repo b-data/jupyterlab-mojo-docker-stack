@@ -1,7 +1,8 @@
 variables:
-  MOJO_VERSION: "26.2.0"
+  MAX_VERSION: "26.3.0"
+  MOJO_VERSION: "1.0.0b1"
   CTAN_REPO_BUILD_LATEST: "https://mirror.init7.net/ctan/systems/texlive/tlnet"
-  TAG_VERSION_MAJ_MIN: "true"
+  TAG_VERSION_MAJ_MIN: "false"
   TAG_VERSION_MAJ: "false"
 
 .before-script-build: &before-script-build
@@ -13,7 +14,12 @@ variables:
   - |
     export CI_APP_REPO=${CI_APP_REPO:-$CI_REGISTRY_IMAGE}
     if [[ $CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH == "freeze-version" ]]; then
-      export CI_APP_TAG=${CI_APP_TAG:-$MOJO_VERSION}
+      if [[ "${INSTALL_MAX}" = "1" || "${INSTALL_MAX}" = "true" ]]; then
+        export VERSION=$MAX_VERSION
+      else
+        export VERSION=$MOJO_VERSION
+      fi
+      export CI_APP_TAG=${CI_APP_TAG:-$VERSION}
     else
       export CI_APP_TAG=${CI_APP_TAG:-$CI_COMMIT_SHA}
     fi
@@ -21,11 +27,11 @@ variables:
     echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER
     --password-stdin $CI_REGISTRY
   - >
-    export VERSION_MAJ_MIN=`echo $MOJO_VERSION |
-    sed -n "s|\([[:digit:]]\+\.[[:digit:]]\+\).*|\1|p"`
+    export VERSION_MAJ_MIN=`echo $VERSION |
+    sed -n "s|\([[:digit:]]\+\.[[:digit:]]\+\)\(\.[[:digit:]]\+\)\(.*\)|\1\3|p"`
 
-    export VERSION_MAJ=`echo $MOJO_VERSION |
-    sed -n "s|\([[:digit:]]\+\).*|\1|p"`
+    export VERSION_MAJ=`echo $VERSION |
+    sed -n "s|\([[:digit:]]\+\)\(\.[[:digit:]]\+\.[[:digit:]]\+\\)\(.*\)|\1\3|p"`
 
 .build:
   image: glcr.b-data.ch/docker/docker:dind
@@ -62,7 +68,9 @@ build:latest-linux-amd64:
     - >
       docker build --pull
       --build-arg BUILD_ON_IMAGE
+      --build-arg MAX_VERSION
       --build-arg MOJO_VERSION
+      --build-arg INSTALL_MAX
       --build-arg CTAN_REPO_BUILD_LATEST
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-linux-amd64
@@ -105,7 +113,9 @@ build:latest-linux-arm64v8:
     - >
       docker build --pull
       --build-arg BUILD_ON_IMAGE
+      --build-arg MAX_VERSION
       --build-arg MOJO_VERSION
+      --build-arg INSTALL_MAX
       --build-arg CTAN_REPO_BUILD_LATEST
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-linux-arm64v8
@@ -148,9 +158,10 @@ build:version-linux-amd64:
     - >
       docker build --pull
       --build-arg BUILD_ON_IMAGE
+      --build-arg INSTALL_MAX
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-linux-amd64
-      -f scipy/$MOJO_VERSION.Dockerfile .
+      -f scipy/$MAX_VERSION.Dockerfile .
     - >
       docker build
       --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG-linux-amd64
@@ -173,7 +184,7 @@ build:version-linux-amd64:
   rules:
     - if: $CI_COMMIT_BRANCH == "freeze-version" && $CI_PIPELINE_TRIGGERED && $CI_BUILD_PLATFORMS =~ /(linux\/amd64)/
       changes:
-        - scipy/$MOJO_VERSION.Dockerfile
+        - scipy/$MAX_VERSION.Dockerfile
 
 build:version-linux-arm64v8:
   extends: .build
@@ -185,9 +196,10 @@ build:version-linux-arm64v8:
     - >
       docker build --pull
       --build-arg BUILD_ON_IMAGE
+      --build-arg INSTALL_MAX
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-linux-arm64v8
-      -f scipy/$MOJO_VERSION.Dockerfile .
+      -f scipy/$MAX_VERSION.Dockerfile .
     - >
       docker build
       --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG-linux-arm64v8
@@ -210,7 +222,7 @@ build:version-linux-arm64v8:
   rules:
     - if: $CI_COMMIT_BRANCH == "freeze-version" && $CI_PIPELINE_TRIGGERED && $CI_BUILD_PLATFORMS =~ /(linux\/arm64\/v8)/
       changes:
-        - scipy/$MOJO_VERSION.Dockerfile
+        - scipy/$MAX_VERSION.Dockerfile
 
 build-manifest:latest-linux-multiarch:
   extends: .build
@@ -381,7 +393,7 @@ build-manifest:version-linux-multiarch:
   rules:
     - if: $CI_COMMIT_BRANCH == "freeze-version" && $CI_PIPELINE_TRIGGERED
       changes:
-        - scipy/$MOJO_VERSION.Dockerfile
+        - scipy/$MAX_VERSION.Dockerfile
 
 build:latest-devtools-linux-amd64:
   extends: .build
@@ -392,8 +404,7 @@ build:latest-devtools-linux-amd64:
   script:
     - >
       docker build --pull
-      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO
-      --build-arg MOJO_VERSION
+      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-devtools-linux-amd64
       -t $CI_APP_REPO:latest-devtools-linux-amd64
@@ -443,8 +454,7 @@ build:latest-devtools-linux-arm64v8:
   script:
     - >
       docker build --pull
-      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO
-      --build-arg MOJO_VERSION
+      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-devtools-linux-arm64v8
       -t $CI_APP_REPO:latest-devtools-linux-arm64v8
@@ -494,10 +504,10 @@ build:version-devtools-linux-amd64:
   script:
     - >
       docker build --pull
-      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO
+      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-devtools-linux-amd64
-      -f common/subtags/devtools/$MOJO_VERSION.Dockerfile .
+      -f common/subtags/devtools/$MAX_VERSION.Dockerfile .
     - >
       docker build
       --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG-devtools-linux-amd64
@@ -524,8 +534,8 @@ build:version-devtools-linux-amd64:
   rules:
     - if: $CI_COMMIT_BRANCH == "freeze-version" && $CI_PIPELINE_TRIGGERED && $CI_BUILD_PLATFORMS =~ /(linux\/amd64)/
       changes:
-        - scipy/$MOJO_VERSION.Dockerfile
-        - common/subtags/devtools/$MOJO_VERSION.Dockerfile
+        - scipy/$MAX_VERSION.Dockerfile
+        - common/subtags/devtools/$MAX_VERSION.Dockerfile
 
 build:version-devtools-linux-arm64v8:
   extends: .build
@@ -536,10 +546,10 @@ build:version-devtools-linux-arm64v8:
   script:
     - >
       docker build --pull
-      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO
+      --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG
       --build-arg BUILD_START=$(date -uIseconds)
       -t $CI_APP_REPO:$CI_APP_TAG-devtools-linux-arm64v8
-      -f common/subtags/devtools/$MOJO_VERSION.Dockerfile .
+      -f common/subtags/devtools/$MAX_VERSION.Dockerfile .
     - >
       docker build
       --build-arg BUILD_ON_IMAGE=$CI_APP_REPO:$CI_APP_TAG-devtools-linux-arm64v8
@@ -566,8 +576,8 @@ build:version-devtools-linux-arm64v8:
   rules:
     - if: $CI_COMMIT_BRANCH == "freeze-version" && $CI_PIPELINE_TRIGGERED && $CI_BUILD_PLATFORMS =~ /(linux\/arm64\/v8)/
       changes:
-        - scipy/$MOJO_VERSION.Dockerfile
-        - common/subtags/devtools/$MOJO_VERSION.Dockerfile
+        - scipy/$MAX_VERSION.Dockerfile
+        - common/subtags/devtools/$MAX_VERSION.Dockerfile
 
 build-manifest:latest-devtools-linux-multiarch:
   extends: .build
@@ -739,5 +749,5 @@ build-manifest:version-devtools-linux-multiarch:
   rules:
     - if: $CI_COMMIT_BRANCH == "freeze-version" && $CI_PIPELINE_TRIGGERED
       changes:
-        - scipy/$MOJO_VERSION.Dockerfile
-        - common/subtags/devtools/$MOJO_VERSION.Dockerfile
+        - scipy/$MAX_VERSION.Dockerfile
+        - common/subtags/devtools/$MAX_VERSION.Dockerfile

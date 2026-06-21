@@ -21,6 +21,11 @@ Images considered stable for Mojo versions ≥ 24.3.0.
 
 ![Screenshot](assets/screenshot.png)
 
+Due to ongoing DDoS attacks, access to b-data's IT infrastructure has been
+blocked for all Chinese servers.  
+:information_source: For any requests to unblock individual Chinese IPs or CIDR
+blocks, please contact <olivier.benz@b-data.ch>.
+
 **Build chain**
 
 base → scipy
@@ -139,8 +144,8 @@ latest:
 ```shell
 cd base
 docker build \
-  --build-arg MOJO_VERSION=26.2.0 \
-  --build-arg PYTHON_VERSION=3.14.4 \
+  --build-arg MOJO_VERSION=1.0.0b1 \
+  --build-arg PYTHON_VERSION=3.14.6 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```

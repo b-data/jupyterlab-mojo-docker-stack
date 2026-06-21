@@ -6,6 +6,7 @@ Topmost entry = Tag `latest`
 
 | MAX    | Python  | CUDA   | Linux distro |
 |:-------|:--------|:-------|:-------------|
+| 26.3.0 | 3.14.6  | 13.3.0 | Ubuntu 24.04 |
 | 26.2.0 | 3.14.4  | 13.2.1 | Ubuntu 24.04 |
 | 26.1.0 | 3.13.11 | 13.1.1 | Ubuntu 24.04 |
 | 25.7.0 | 3.13.11 | 13.0.2 | Ubuntu 24.04 |
@@ -19,13 +20,14 @@ Topmost entry = Tag `latest`
 
 ## PyTorch compatibility
 
-| Python | CUDA | PyTorch[^1]   |
-|:-------|:-----|:--------------|
-| 3.14   | 13.2 | version ≥ 2.9 |
-| 3.13   | 13.1 | version ≥ 2.9 |
-| 3.13   | 13.0 | version ≥ 2.9 |
-| 3.12   | 12.9 | version ≥ 2.4 |
-| 3.12   | 12.8 | version ≥ 2.4 |
+| Python | CUDA | PyTorch[^1]                  |
+|:-------|:-----|:-----------------------------|
+| 3.14   | 13.3 | version ≥ 2.9 (experimental) |
+| 3.14   | 13.2 | version ≥ 2.9 (experimental) |
+| 3.13   | 13.1 | version ≥ 2.9                |
+| 3.13   | 13.0 | version ≥ 2.9                |
+| 3.12   | 12.9 | version ≥ 2.4                |
+| 3.12   | 12.8 | version ≥ 2.4                |
 
 [^1]: Ships with its own CUDA dependencies
 
@@ -33,6 +35,7 @@ Topmost entry = Tag `latest`
 
 | CUDA   | Linux driver version | Windows driver version[^2] |
 |:-------|:---------------------|:---------------------------|
+| 13.3.0 | ≥ 610.43.02          | n/a                        |
 | 13.2.1 | ≥ 595.58.03          | n/a                        |
 | 13.1.1 | ≥ 590.48.01          | n/a                        |
 | 13.0.2 | ≥ 580.95.05          | n/a                        |

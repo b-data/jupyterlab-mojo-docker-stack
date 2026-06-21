@@ -1,17 +1,18 @@
 ARG BASE_IMAGE=debian
 ARG BASE_IMAGE_TAG=13
 ARG BUILD_ON_IMAGE=glcr.b-data.ch/python/ver
+ARG MAX_VERSION
 ARG MOJO_VERSION
 ARG PYTHON_VERSION
 ARG CUDA_IMAGE_FLAVOR
 
 ARG NB_USER=jovyan
 ARG NB_UID=1000
-ARG JUPYTERHUB_VERSION=5.4.4
-ARG JUPYTERLAB_VERSION=4.5.7
+ARG JUPYTERHUB_VERSION=5.4.6
+ARG JUPYTERLAB_VERSION=4.5.8
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG CODE_SERVER_VERSION=4.117.0
-ARG NEOVIM_VERSION=0.12.2
+ARG CODE_SERVER_VERSION=4.125.0
+ARG NEOVIM_VERSION=0.12.3
 ARG GIT_VERSION=2.54.0
 ARG GIT_LFS_VERSION=3.7.1
 ARG PANDOC_VERSION=3.8.3
@@ -75,8 +76,13 @@ RUN cp -a /files/etc/skel/. /files/var/backups/skel \
 FROM glcr.b-data.ch/neovim/nvsi:${NEOVIM_VERSION} AS nvsi
 FROM glcr.b-data.ch/git/gsi/${GIT_VERSION}/${BASE_IMAGE}:${BASE_IMAGE_TAG} AS gsi
 FROM glcr.b-data.ch/git-lfs/glfsi:${GIT_LFS_VERSION} AS glfsi
+FROM glcr.b-data.ch/vscode-extensions/ms-python.python:latest-python-env-tools AS pet
 
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-cuda-max
+
+ARG MAX_VERSION
+
+ENV MAX_VERSION=${MAX_VERSION%%-*}
 
 ## For use with the NVIDIA Container Runtime
 ENV NVIDIA_VISIBLE_DEVICES=all
@@ -84,6 +90,10 @@ ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
 ENV NVIDIA_PRODUCT_NAME=CUDA
 
 FROM ${BUILD_ON_IMAGE}${PYTHON_VERSION:+:}${PYTHON_VERSION}${CUDA_IMAGE_FLAVOR:+-}${CUDA_IMAGE_FLAVOR} AS base-max
+
+ARG MAX_VERSION
+
+ENV MAX_VERSION=${MAX_VERSION%%-*}
 
 ## For use with the NVIDIA Container Runtime
 ENV NVIDIA_VISIBLE_DEVICES=all
@@ -266,6 +276,7 @@ FROM base AS modular
 
 ARG NB_GID=100
 
+ARG MAX_VERSION
 ARG MOJO_VERSION
 ARG INSTALL_MAX
 
@@ -281,12 +292,22 @@ RUN curl -fsSL https://pixi.sh/install.sh | bash \
 
   ## Install MAX/Mojo
 RUN cd /tmp \
-  && if [ "${MOJO_VERSION}" = "nightly" ]; then \
-    pixi init -c conda-forge -c https://conda.modular.com/max-nightly; \
-    pixi add modular python==${PYTHON_VERSION%.*}; \
+  && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
+    if [ "${MAX_VERSION}" = "nightly" ]; then \
+      pixi init -c conda-forge -c https://conda.modular.com/max-nightly; \
+      pixi add modular python==${PYTHON_VERSION%.*}; \
+    else \
+      pixi init -c conda-forge -c https://conda.modular.com/max; \
+      pixi add modular==${MAX_VERSION} python==${PYTHON_VERSION%.*}; \
+    fi \
   else \
-    pixi init -c conda-forge -c https://conda.modular.com/max; \
-    pixi add modular==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
+    if [ "${MOJO_VERSION}" = "nightly" ]; then \
+      pixi init -c conda-forge -c https://conda.modular.com/max-nightly; \
+      pixi add mojo python==${PYTHON_VERSION%.*}; \
+    else \
+      pixi init -c conda-forge -c https://conda.modular.com/max; \
+      pixi add mojo==${MOJO_VERSION} python==${PYTHON_VERSION%.*}; \
+    fi \
   fi \
   && yq -r \
     '.packages | map(select(.license == "LicenseRef-Modular-Proprietary")) | .[].depends[]?' pixi.lock \
@@ -302,6 +323,7 @@ RUN cd /tmp \
     cp -a default/bin/max* \
       /opt/modular/bin; \
     cp -a default/lib/libmax.so \
+      default/lib/libMGPRT.so \
       /opt/modular/lib; \
     cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
@@ -315,7 +337,6 @@ RUN cd /tmp \
   && cp -a default/lib/libAsyncRT* \
     default/lib/libKGENCompilerRT* \
     default/lib/liblldb* \
-    default/lib/libMGPRT.so \
     default/lib/libMojo* \
     default/lib/libMSupport* \
     default/lib/libNVPTX.so \
@@ -364,7 +385,7 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
   && sed -i "s|\$PYTHON|$(which python)|g" \
     /usr/local/share/jupyter/kernels/mojo*/kernel.json \
   ## Change display name in the Mojo kernel for Jupyter
-  && sed -i "s|\"display_name\".*|\"display_name\": \"Mojo $MOJO_VERSION${INSTALL_MAX:+ (MAX)}\",|g" \
+  && sed -i "s|\"display_name\".*|\"display_name\": \"Mojo $MOJO_VERSION${INSTALL_MAX:+ (MAX $MAX_VERSION)}\",|g" \
     /usr/local/share/jupyter/kernels/mojo*/kernel.json \
   && if [ "${MOJO_VERSION}" = "nightly" ]; then \
     cp -a /usr/local/share/jupyter/kernels/mojo*/nightly-logo-64x64.png \
@@ -373,7 +394,7 @@ RUN mkdir -p /usr/local/share/jupyter/kernels \
       /usr/local/share/jupyter/kernels/mojo*/logo.svg; \
   fi
 
-FROM base
+FROM base AS jupyterlab-mojo-base
 
 ARG INSTALL_MAX
 
@@ -529,9 +550,23 @@ RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master
   ## Create backup of home directory
   && cp -a ${HOME}/. /var/backups/skel
 
+FROM files AS files-pet
+
+COPY --from=jupyterlab-mojo-base /opt/code-server/lib/vscode/extensions /tmp/extensions
+COPY --from=pet /python-env-tools /tmp/python-env-tools
+
+## Add missing Python environment tools to Python extension
+RUN extensionBasename="$(basename /tmp/extensions/ms-python.python-*)" \
+  && mkdir -p "/files/opt/code-server/lib/vscode/extensions/$extensionBasename" \
+  && cp -r /tmp/python-env-tools \
+    /files/opt/code-server/lib/vscode/extensions/ms-python.python-*-universal \
+  && rm -rf /tmp/*
+
+FROM jupyterlab-mojo-base
+
 ## Copy files as late as possible to avoid cache busting
-COPY --from=files /files /
-COPY --from=files /files/var/backups/skel ${HOME}
+COPY --from=files-pet /files /
+COPY --from=files-pet /files/var/backups/skel ${HOME}
 
 ARG JUPYTER_PORT=8888
 ENV JUPYTER_PORT=${JUPYTER_PORT}
