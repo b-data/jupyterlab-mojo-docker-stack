@@ -2,7 +2,7 @@ ARG BUILD_ON_IMAGE=glcr.b-data.ch/jupyterlab/mojo/base
 ARG MAX_VERSION
 ARG MOJO_VERSION
 ARG CODE_BUILTIN_EXTENSIONS_DIR=/opt/code-server/lib/vscode/extensions
-ARG QUARTO_VERSION=1.9.38
+ARG QUARTO_VERSION=1.10.18
 ARG CTAN_REPO=https://mirror.ctan.org/systems/texlive/tlnet
 
 ARG INSTALL_MAX
