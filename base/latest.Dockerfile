@@ -324,6 +324,7 @@ RUN cd /tmp \
       /opt/modular/bin; \
     cp -a default/lib/libmax.so \
       default/lib/libMGPRT.so \
+      default/lib/libNVPTX.so \
       /opt/modular/lib; \
     cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
@@ -339,7 +340,6 @@ RUN cd /tmp \
     default/lib/liblldb* \
     default/lib/libMojo* \
     default/lib/libMSupport* \
-    default/lib/libNVPTX.so \
     default/lib/lldb* \
     default/lib/mojo* \
     /opt/modular/lib \
