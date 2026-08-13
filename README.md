@@ -144,8 +144,8 @@ latest:
 ```shell
 cd base
 docker build \
-  --build-arg MOJO_VERSION=1.0.0b1 \
-  --build-arg PYTHON_VERSION=3.14.6 \
+  --build-arg MOJO_VERSION=1.0.0b2 \
+  --build-arg PYTHON_VERSION=3.14.7 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
@@ -180,6 +180,7 @@ self built:
 
 ```shell
 docker run -it --rm \
+  --cap-add SYS_NICE \
   -p 8888:8888 \
   -u root \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
@@ -192,6 +193,7 @@ from the project's GitLab Container Registries:
 
 ```shell
 docker run -it --rm \
+  --cap-add SYS_NICE \
   -p 8888:8888 \
   -u root \
   -v "${PWD}/jupyterlab-jovyan":/home/jovyan \
