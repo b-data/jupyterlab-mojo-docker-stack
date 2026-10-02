@@ -140,7 +140,7 @@ latest:
 cd base
 docker build \
   --build-arg MOJO_VERSION=1.1.0 \
-  --build-arg PYTHON_VERSION=3.14.7 \
+  --build-arg PYTHON_VERSION=3.14.8 \
   -t jupyterlab/mojo/base \
   -f latest.Dockerfile .
 ```
