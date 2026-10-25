@@ -31,6 +31,7 @@ Topmost entry = Tag `latest`
 
 ### Bugs
 
+* Version 26.5.0: MAX is not working because `libnixl.so` is missing
 * Version 26.1.0: \[BUG\]\[MAX\]: model compiles/graph is built, then max hangs
   before silently exiting  
   :information_source: Versions ≥ 26.2.0 exit with an error message

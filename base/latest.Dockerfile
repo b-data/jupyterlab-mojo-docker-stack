@@ -322,18 +322,25 @@ RUN cd /tmp \
   && if [ "${INSTALL_MAX}" = "1" ] || [ "${INSTALL_MAX}" = "true" ]; then \
     cp -a default/bin/max* \
       /opt/modular/bin; \
-    cp -a default/lib/libmax.so \
+    cp -a default/lib/libjemalloc_preload.so \
+      default/lib/libmax* \
       default/lib/libMGPRT.so \
+      default/lib/libnixl.so \
       default/lib/libNVPTX.so \
+      default/lib/libnvshmem* \
+      default/lib/nvshmem* \
       /opt/modular/lib; \
     cp -a default/lib/python${PYTHON_VERSION%.*}/site-packages/max* \
       /usr/local/lib/python${PYTHON_VERSION%.*}/site-packages; \
   fi \
-  && cp -a default/bin/lld \
+  && cp -a default/bin/gpu-query \
+    default/bin/lld \
     default/bin/lldb* \
+    default/bin/llvm-symbolizer \
     default/bin/mblack \
     default/bin/modular* \
     default/bin/mojo* \
+    default/bin/_mojo* \
     /opt/modular/bin \
   && cp -a default/lib/libAsyncRT* \
     default/lib/libKGENCompilerRT* \
