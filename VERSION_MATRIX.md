@@ -8,6 +8,7 @@ Topmost entry = Tag `latest`
 
 | MAX/Mojo       | Python  | Jupyter Hub | Jupyter Lab | code‑server (Code) | Neovim | Git    | Git LFS | Pandoc | Linux distro |
 |:---------------|:--------|:------------|:------------|:-------------------|:-------|:-------|:--------|:-------|:-------------|
+| 26.7.0/1.2.0   | 3.14.9  | 6.1.1       | 4.6.4       | 4.143.1 (1.143.1)  | 0.12.6 | 2.56.0 | 3.8.1   | 3.10   | Debian 13    |
 | 26.6.0/1.1.0   | 3.14.9  | 6.1.1       | 4.6.4       | 4.143.1 (1.143.1)  | 0.12.6 | 2.56.0 | 3.8.1   | 3.10   | Debian 13    |
 | 26.5.0/1.0.0   | 3.14.7  | 5.5.1       | 4.6.3       | 4.137.0 (1.137.0)  | 0.12.5 | 2.55.0 | 3.8.0   | 3.10   | Debian 13    |
 | 26.4.0/1.0.0b2 | 3.14.7  | 5.5.1       | 4.6.3       | 4.132.0 (1.132.0)  | 0.12.4 | 2.55.0 | 3.7.1   | 3.10   | Debian 13    |
@@ -30,6 +31,7 @@ Topmost entry = Tag `latest`
 
 ### Bugs
 
+* Version 26.5.0: MAX is not working because `libnixl.so` is missing
 * Version 26.1.0: \[BUG\]\[MAX\]: model compiles/graph is built, then max hangs
   before silently exiting  
   :information_source: Versions ≥ 26.2.0 exit with an error message
@@ -46,6 +48,7 @@ Topmost entry = Tag `latest`
 
 | MAX/Mojo       | CTAN date  | Quarto  |
 |:---------------|:-----------|:--------|
+| 26.7.0/1.2.0   |            | 1.10.19 |
 | 26.6.0/1.1.0   | 2026-10-22 | 1.10.19 |
 | 26.5.0/1.0.0   | 2026-09-17 | 1.10.18 |
 | 26.4.0/1.0.0b2 | 2026-08-11 | 1.10.18 |
